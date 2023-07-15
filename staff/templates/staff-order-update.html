@@ -1,0 +1,100 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block content %}
+
+<section class="py-12 md:py-24 lg:pb-32 bg-black">
+  <div class="container mx-auto px-4">
+    <div class="max-w-md lg:max-w-lg xl:max-w-none mx-auto">
+      <h3 class="font-heading text-4xl text-white font-bold mb-12">Order#{{order.id}}</h3>
+      <div class="flex flex-wrap -mx-4">
+        <div class="w-full xl:w-1/2 px-4 mb-8 xl:mb-0">
+          <div class="max-w-2xl">
+            
+              <div class="mb-10 pb-12 border-b border-blueGray-800">
+                <h6 class="font-bold text-white mb-6">Order status</h6>
+                <div class="pb-12 mb-8 border-b border-blueGray-800">
+                 
+                  <form method="post"> 
+                    {% csrf_token %} 
+                    {{ form.non_field_errors }}
+                    <div class="mb-6">
+                    {{ form.status }} 
+                    </div>
+                    <button class="block px-6 py-3 text-center font-bold text-black bg-yellow-500 hover:bg-yellow-600 transition duration-200 w-full" type="submit">Update</button>
+                  </form> 
+                </div>
+                <h6 class="font-bold text-white mb-6">Contact Information</h6>
+                <div class="flex flex-wrap -mx-2 mb-6">
+                  <div class="w-full md:w-1/2 px-2 mb-6 md:mb-0">
+                    <label class="block mb-2 text-gray-400 text-sm font-medium" for="">First Name</label>
+                    <p class="text-white">{{order.first_name}}</p>
+                  </div>
+                  <div class="w-full md:w-1/2 px-2">
+                    <label class="block mb-2 text-gray-400 text-sm font-medium" for="">Last Name</label>
+                    <p class="text-white">{{order.last_name}}</p>
+                  </div>
+                </div>
+                <div class="mb-6">
+                  <label class="block mb-2 text-gray-400 text-sm font-medium" for="">Phone number</label>
+                  <p class="text-white">{{order.phone_number}}</p>
+                </div>
+                <div class="mb-6">
+                  <label class="block mb-2 text-gray-400 text-sm font-medium" for="">Address</label>
+                  <p class="text-white">{{order.full_adress}}</p>
+                </div>
+                
+                <div class="flex flex-wrap -mx-2 mb-6">
+                  <div class="w-full md:w-1/2 px-2 mb-6 md:mb-0">
+                    <label class="block mb-2 text-gray-400 text-sm font-medium" for="">Wilaya</label>
+                    <p class="text-white">{{order.state}}</p>
+                  </div>
+                  <div class="w-full md:w-1/2 px-2">
+                    <label class="block mb-2 text-gray-400 text-sm font-medium" for="">Commune</label>
+                    <p class="text-white">{{order.city}}</p>
+                  </div>
+                </div>
+              </div>
+           
+          </div>
+        </div>
+        <div class="w-full xl:w-1/2 px-4">
+          <div class="max-w-lg mx-auto xl:mr-0">
+            <h6 class="font-bold text-white mb-5">Order Details</h6>
+            <div class="bg-blueGray-900">
+              <div class="flex items-start p-8 border-b border-blueGray-800">
+                <img class="block h-28 w-20" src="{% static 'assets/images/checkout/item-checkout1.png' %}" alt="">
+                <div class="w-full pl-5">
+                  <div class="flex mb-4 items-start justify-between">
+                    <div class="mr-10">
+                      <a class="inline-block mb-1 text-sm font-bold text-white" href="#">{{order.product.name}}</a>
+                      <span class="block text-sm font-medium text-gray-400">Quantity: {{order.quantity}}</span>
+                    </div>
+                  </div>
+                  <div class="flex items-end justify-between">
+                    <span class="text-sm font-bold text-white">{{order.product.price}}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="p-8">
+                <div class="flex mb-5 items-center justify-between">
+                  <span class="text-sm font-medium text-gray-400">Subtotal</span>
+                  <span class="text-sm font-medium text-white">{{order.total_price}}</span>
+                </div>
+                <div class="flex mb-5 items-center justify-between">
+                  <span class="text-sm font-medium text-gray-400">Shipping</span>
+                  <span class="text-sm font-medium text-white"> Free</span>
+                </div>
+                
+                <div class="flex mb-8 items-center justify-between">
+                  <span class="text-sm font-bold text-white">Total To pay</span>
+                  <span class="text-sm font-bold text-white">{{order.total_price}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock  %}

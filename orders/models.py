@@ -36,6 +36,23 @@ def order_status_pre_save_receiver(sender, instance, *args, **kwargs):
         instance.status =order_status
 
 
+def order_staff_member_pre_save_receiver(sender, instance, *args, **kwargs):
+    if not instance.staff_member:
+        staff_members = StaffMember.objects.all()
+        if staff_members:
+            last_staff_member = Order.objects.order_by('-id').first().staff_member if Order.objects.exists() else None
+            if last_staff_member:
+                next_staff_member = staff_members.filter(id__gt=last_staff_member.id).first()
+                if not next_staff_member:
+                    next_staff_member = staff_members.first()
+            else:
+                next_staff_member = staff_members.first()
+            instance.staff_member =next_staff_member
+            
+
+            
+
+
 
 def create_parcel_receiver(sender, instance, *args, **kwargs):
     try:
@@ -118,7 +135,7 @@ def create_parcel_receiver(sender, instance, *args, **kwargs):
                 if post_response_py_dic[f"order{instance.pk}"]['success']:
                     instance.tracking_id = post_response_py_dic[f"order{instance.pk}"]['tracking']
                     instance.error = "No Error"
-                    instance.error_message = "Parcel was updated successfully on yalidine"
+                    instance.error_message = "Parcel wascreated on yalidine and tracking id was update in here"
                 else :
                     instance.error = "Failed"
                     instance.error_message = "Parcel creation on yalidine failed"
@@ -199,6 +216,7 @@ class Session(models.Model):
 
 class OrderStatus(models.Model):
     name = models.CharField(max_length=255)
+    color = models.CharField(max_length=20,null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -308,15 +326,18 @@ class Order(models.Model):
     @property
     def has_exchange(self):
         return False
-
-
+    
 
     def __str__(self):
         return f"Order #{self.pk}"
+    
+    def staff_order_update_absolute_url(self):
+        return reverse('staff_order_update',kwargs={'pk':self.pk})
 
     
         
 pre_save.connect(order_status_pre_save_receiver, sender=Order)
+pre_save.connect(order_staff_member_pre_save_receiver, sender=Order)
 pre_save.connect(order_total_receiver, sender=Order)
 pre_save.connect(create_parcel_receiver, sender=Order)
 class OrderSerializer(serializers.ModelSerializer):

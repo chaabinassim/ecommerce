@@ -37,12 +37,19 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'django_filters',
     'products',
     'delivery',
     'rest_framework',
     'tailwind',
     'theme' ,
-    'orders'
+    'orders',
+    'staff',
+    'performance',
   
 ]
 
@@ -57,6 +64,16 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'ecommerce.urls'
+
+AUTHENTICATION_BACKENDS = [
+    
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+   
+]
 
 TEMPLATES = [
     {
@@ -142,3 +159,7 @@ INTERNAL_IPS = [
 ]
 NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd"
 TAILWIND_APP_NAME = 'theme'
+
+
+
+SITE_ID = 1

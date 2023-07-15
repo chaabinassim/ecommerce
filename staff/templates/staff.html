@@ -1,0 +1,164 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block content %}
+
+
+<section class="py-20">
+    <div class="container px-4 mx-auto">
+      <div class="flex flex-wrap -mx-4">
+        <div class="w-full lg:w-4/12 xl:w-3/12 px-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-1 gap-6 md:gap-2 lg:gap-6 px-4 lg:pt-5 pb-20 lg:pb-9 border ">
+            <h6 class="font-bold  mb-5"> Filter</h6>
+            <div class="container mx-auto flex justify-center items-center ">
+                <!-- Render the filter form -->
+                <form method="get" action="" class="flex flex-col gap-4">
+                  <div class="flex items-center">
+                    <label for="{{ order_filter.form.status.id_for_label }}" class="block text-sm font-medium text-gray-700 mr-2">Status</label>
+                    {{ order_filter.form.status }}
+                  </div>
+                  <div class="flex items-center">
+                    <label for="{{ order_filter.form.created_on.id_for_label }}" class="block text-sm font-medium text-gray-700 mr-2">date</label>
+                    {{ order_filter.form.created_on }}
+                  </div>
+                  <div>
+                    <button type="submit" class="block px-6 py-3 text-center font-bold text-black bg-yellow-500 hover:bg-yellow-600 transition duration-200 w-full rounded">
+                      Apply Filters
+                    </button>
+                  </div>
+                </form>
+              </div>
+          </div>
+        </div>
+        <div class="w-full lg:w-8/12 xl:9/12 px-4">
+
+             <!--table-->
+            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                    <tr>
+                        <th scope="col" class="px-6 py-3">
+                            Date
+                        </th>
+        
+                        <th scope="col" class="px-6 py-3">
+                            time
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Product name
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            wilaya
+                        </th>
+        
+                        <th scope="col" class="px-6 py-3">
+                            status
+                        </th>
+                        {% if request.user.is_staff %}
+                        <th scope="col" class="px-6 py-3">
+                            yalidine
+                        </th>
+                        {% endif  %}
+                        <th scope="col" class="px-6 py-3">
+                            <span class="sr-only">Edit</span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in page_obj %}
+                    <tr class="bg-white border-b ">
+                        <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                            {{order.created_on|date:"M d, Y"}}
+                        </td>
+        
+                        <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                            {{order.created_on|time}}
+                        </td>
+                        <td class="px-6 py-4">
+                            {{order.product.name}}
+                        </td>
+                        <td class="px-6 py-4">
+                            {{order.state}}
+                        </td>
+        
+                        <td class="px-6 py-4">
+                            <span class="bg-{{order.status.color}} text-black text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">{{order.status}}</span>
+                        </td>
+
+                        {% if request.user.is_staff %}
+                        <td scope="col" class="px-6 py-4 text-xs">
+                            {{order.tracking_id}}
+                        </td>
+                        {% endif  %}
+        
+                        <td class="px-6 py-4 text-right">
+                            <a href="{{order.staff_order_update_absolute_url}}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+           
+            <!--pagination-->
+            <section class="py-5  mt-5">
+                <div class="container mx-auto px-4">
+                  <nav>
+                    <ul class="flex items-center justify-center">
+                    {% if page_obj.has_previous %}
+                      <li>
+                        <a class="flex w-9 h-9 items-center justify-center bg-black text-white hover:text-gray-200" href="?page={{ page_obj.previous_page_number }}" aria-label="previous">
+                          <svg width="7" height="12" viewBox="0 0 7 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M6 10.6666L1.33333 5.99992L6 1.33325" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                          </svg>
+                        </a>
+                      </li>
+                      {% endif %}
+            
+                      {% for page_num in page_obj.paginator.page_range %}
+                      {% if page_obj.number == page_num %}
+                       <li><a class="flex w-9 h-9 items-center justify-center  bg-yellow-500 text-black font-bold" href="">{{ page_num }}</a></li>
+                       {% else %}
+                       <li><a class="flex w-9 h-9 items-center justify-center bg-black  text-white hover:text-gray-200 font-bold" href="?page={{ page_num }}">{{ page_num }}</a></li>
+                       {% endif %}
+                       {% endfor %}
+                      {% if page_obj.has_next %}
+                      <li>
+                        <a class="flex w-9 h-9 items-center justify-center bg-black text-white hover:text-gray-200" href="?page={{ page_obj.next_page_number }}" aria-label="next">
+                          <svg width="7" height="12" viewBox="0 0 7 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M1 1.33341L5.66667 6.00008L1 10.6667" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                          </svg>
+                        </a>
+                      </li>
+                      {% endif %}
+                    </ul>
+                  </nav>
+                </div>
+            </section>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+<!--
+  <span class="bg-green-500 ">Green</span>
+  <span class="bg-yellow-500">Yellow</span>
+  <span class="bg-red-500 ">Red</span>
+  <span class="bg-orange-300 ">Light Orange</span>
+  <span class="bg-orange-500">Medium Orange</span>
+  <span class="bg-orange-700">Dark Orange</span>
+-->
+<!--
+<span class="form-input w-full px-3 py-2 rounded-md placeholder-gray-400 focus:outline-none focus:ring focus:border-blue-500 datetimepicker bg-gray-100"></span>
+-->
+{% endblock %}
+
+
+{% block scripts %}
+<!-- Initialize datetimepicker -->
+<script>
+    $(function() {
+        $('.datetimepicker').datepicker({
+            format: 'YYYY-MM-DD'
+        });
+    });
+</script>
+{% endblock %}

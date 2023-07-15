@@ -21,7 +21,7 @@
           <li><a class="text-yellow-500 font-medium" href="#">{{product.name}}</a></li>
         </ul>
         <div class="flex flex-wrap mt-10 -mx-4">
-          <div class="w-full md:w-1/2 lg:w-3/5 xl:w-2/3 mb-12 md:mb-0 px-4">
+          <div class="w-full md:w-1/2 lg:w-3/5  mb-12 md:mb-0 px-4">
             <div class="max-w-3xl">
               <div class="lg:flex h-full">
                 <div class="lg:flex-shrink-0 lg:w-20 lg:mr-6">
@@ -46,7 +46,7 @@
               </div>
             </div>
           </div>
-          <div class="w-full md:w-1/2 lg:w-2/5 xl:w-1/3 px-4">
+          <div class="w-full md:w-1/2 lg:w-2/5  px-4">
             <div class="p-8 h-full border border-blueGray-800">
               <div class="pb-8 border-b border-blueGray-800">
                 <span class="inline-block px-2 text-sm mb-5 bg-yellow-500 font-medium rounded-full">Hot</span>
@@ -59,29 +59,39 @@
                 </div>
               </div>
               <div class="pt-8 pb-8 ">
-                <div class="max-w-xs xl:pr-20">
+                <div class="w-full">
                   <form method="POST">
                     {% csrf_token %}
                     {{ form.non_field_errors }}
 
-                    <div class="mb-6">
-                      {{ form.first_name.errors }}
-                      {{ form.first_name }}
+                  <div class="flex flex-wrap flex-row-reverse -mx-2 mb-6">
+                    
+                    <div class="w-full md:w-1/2 px-2 mb-6 md:mb-0 ">
+                        {{ form.first_name.errors }}
+                        {{ form.first_name }}
+                    </div>
+
+                    <div class="w-full md:w-1/2 px-2">
+                      {{ form.last_name.errors }}
+                      {{ form.last_name }}
                    </div>
 
-                  <div class="mb-6">
-                    {{ form.last_name.errors }}
-                    {{ form.last_name }}
                   </div>
 
-                    <div class="mb-6">
-                        {{ form.state.errors }}
-                        {{ form.state }}
+                  <div class="flex flex-wrap flex-row-reverse -mx-2 mb-6">
+                   
+                    <div class="w-full md:w-1/2 px-2 mb-6 md:mb-0">
+                      {{ form.state.errors }}
+                      {{ form.state }}
                     </div>
-                    <div class="mb-6">
-                        {{ form.city.errors }}
-                        {{ form.city }}
+
+                    <div class="w-full md:w-1/2 px-2 ">
+
+                      {{ form.city.errors }}
+                      {{ form.city }}
                     </div>
+                  </div>
+
                     <div class="mb-6">
                         {{ form.full_adress.errors }}
                         {{ form.full_adress }}
@@ -100,7 +110,7 @@
                       {{ form.quantity.errors }}
                       {{ form.quantity }}
                    </div>
-                    <button type="submit" class="inline-block px-12 py-4 text-center text-black font-bold bg-yellow-500 hover:bg-yellow-600 transition duration-200">Create order</button>
+                   <button type="submit" class="w-full inline-block px-12 py-4 text-center text-black font-bold bg-yellow-500 hover:bg-yellow-600 transition duration-200"> order</button>
                   </form>
                 </div>
               </div>
@@ -111,53 +121,8 @@
     </div>
   </section>
 
-<!---
-    <div class="container">
-        <div class="row">
-            <div class="col-md-6"></div>
-            <div class="col-md-6">
-                <h1>{{product.name}}</h1>
 
-                <form method="POST" >
-                    {% csrf_token %}
-                    {{ form.non_field_errors }}
-                    <div>
-                        {{ form.state.errors }}
-                        <label for="{{ form.state.id_for_label }}">State:</label>
-                        {{ form.state }}
-                    </div>
-                    <div>
-                        {{ form.city.errors }}
-                        <label for="{{ form.city.id_for_label }}">City:</label>
-                        {{ form.city }}
-                    </div>
-                    <div>
-                        {{ form.street.errors }}
-                        <label for="{{ form.street.id_for_label }}">Street:</label>
-                        {{ form.street }}
-                    </div>
-                    <div>
-                        {{ form.product.errors }}
-                        <label for="{{ form.product.id_for_label }}">Product:</label>
-                        {{ form.product }}
-                    </div>
-                    <div>
-                        {{ form.quantity.errors }}
-                        <label for="{{ form.quantity.id_for_label }}">Quantity:</label>
-                        {{ form.quantity }}
-                    </div>
-                    <div>
-                        {{ form.phone_number.errors }}
-                        <label for="{{ form.phone_number.id_for_label }}">Phone Number:</label>
-                        {{ form.phone_number }}
-                    </div>
-                    <input type="submit" value="Create Order">
-                </form>
 
-            </div>
-        </div>
-    </div>
--->  
 {% endblock content %}
 
 {% block scripts  %}
@@ -186,7 +151,7 @@
 
     function populateCityOptions(stateId) {
         const cities = stateCityData[stateId];
-        citySelect.innerHTML = '';
+        citySelect.innerHTML = '<option value="" selected="">البلدية</option>';
         cities.forEach(city => {
             const option = document.createElement('option');
             option.value = city.id;

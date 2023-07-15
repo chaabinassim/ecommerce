@@ -17,3 +17,6 @@ def order_success(request,order_id):
 def cart(request):
     
     return render(request,'cart.html')
+
+
+

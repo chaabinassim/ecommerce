@@ -6,56 +6,69 @@
 <section class="py-20">
     <div class="container px-4 mx-auto">
       <div class="flex flex-wrap -mx-4">
-        <div class="w-full lg:w-4/12 xl:w-3/12 px-4">
-          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-1 gap-6 md:gap-2 lg:gap-6 px-4 lg:pt-5 pb-20 lg:pb-9 border ">
-            <h6 class="font-bold  mb-5"> Filter</h6>
-            <div class="container mx-auto flex justify-center items-center ">
+        <div class="w-full lg:w-4/12 xl:w-3/12 px-4 mb-5">
+          <div class="p-5 border rounded">
+            <div class="w-full ">
                 <!-- Render the filter form -->
-                <form method="get" action="" class="flex flex-col gap-4">
-                  <div class="flex items-center">
-                    <label for="{{ order_filter.form.status.id_for_label }}" class="block text-sm font-medium text-gray-700 mr-2">Status</label>
+                <form method="GET" action="{% url 'staff_view' %}">
+                  {% if  order_filter.form.non_field_errors %}
+                      <div class="mb-4 text-red-500">
+                          {{ form.non_field_errors }}
+                      </div>
+                  {% endif %}
+
+                  <div class="mb-4">
+                    <label for="id_status" class="block font-medium">Status</label>
                     {{ order_filter.form.status }}
+                    {% if order_filter.form.status.errors %}
+                        <div class="mt-1 text-red-500">
+                            {{ order_filter.form.status.errors|join:", " }}
+                        </div>
+                    {% endif %}
                   </div>
-                  <div class="flex items-center">
-                    <label for="{{ order_filter.form.created_on.id_for_label }}" class="block text-sm font-medium text-gray-700 mr-2">date</label>
-                    {{ order_filter.form.created_on }}
+                
+                  <div class="mb-4">
+                      <label for="id_start_date" class="block font-medium">Start Date:</label>
+                      <input type="date" name="start_date" value="{{ order_filter.form.start_date.value|default_if_none:'' }}" class="w-full rounded border-gray-300 border p-2 focus:outline-none focus:border-blue-500">
                   </div>
-                  <div>
-                    <button type="submit" class="block px-6 py-3 text-center font-bold text-black bg-yellow-500 hover:bg-yellow-600 transition duration-200 w-full rounded">
-                      Apply Filters
-                    </button>
+          
+                  <div class="mb-4">
+                      <label for="id_end_date" class="block font-medium">End Date:</label>
+                      <input type="date" name="end_date" value="{{ order_filter.form.end_date.value|default_if_none:'' }}" class="w-full rounded border-gray-300 border p-2 focus:outline-none focus:border-blue-500">
                   </div>
-                </form>
-              </div>
+     
+                <button type="submit" class="w-full inline-block px-12 py-4 text-center text-black font-bold bg-yellow-500 hover:bg-yellow-600 transition duration-200">Apply Filters</button>
+              
+              </form>
+            </div>
           </div>
         </div>
-        <div class="w-full lg:w-8/12 xl:9/12 px-4">
-
+        <div class="w-full lg:w-8/12 xl:9/12 px-4 overflow-x-scroll">
              <!--table-->
-            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <table class="table-auto  text-sm text-left text-gray-500 ">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                     <tr>
                         <th scope="col" class="px-6 py-3">
                             Date
                         </th>
         
-                        <th scope="col" class="px-6 py-3">
-                            time
-                        </th>
-                        <th scope="col" class="px-6 py-3">
+                        <th scope="col" class="px-6 py-3 hidden md:table-cell">
                             Product name
                         </th>
-                        <th scope="col" class="px-6 py-3">
+
+                        <th scope="col" class="px-6 py-3 hidden md:table-cell">
                             wilaya
                         </th>
         
                         <th scope="col" class="px-6 py-3">
                             status
                         </th>
+
                         {% if request.user.is_staff %}
                         <th scope="col" class="px-6 py-3">
                             yalidine
                         </th>
+
                         {% endif  %}
                         <th scope="col" class="px-6 py-3">
                             <span class="sr-only">Edit</span>
@@ -66,21 +79,19 @@
                     {% for order in page_obj %}
                     <tr class="bg-white border-b ">
                         <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                            {{order.created_on|date:"M d, Y"}}
+                            {{order.created_on|date:"M d, Y"}} <br>
+                            {{order.created_on_time}}
                         </td>
         
-                        <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                            {{order.created_on|time}}
-                        </td>
-                        <td class="px-6 py-4">
+                        <td class="px-6 py-4 hidden md:table-cell">
                             {{order.product.name}}
                         </td>
-                        <td class="px-6 py-4">
+                        <td class="px-6 py-4 hidden md:table-cell">
                             {{order.state}}
                         </td>
         
                         <td class="px-6 py-4">
-                            <span class="bg-{{order.status.color}} text-black text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">{{order.status}}</span>
+                            <span class="bg-{{order.status.color}} text-black text-xs font-medium mr-2 px-2.5 py-0.5 rounded">{{order.status}}</span>
                         </td>
 
                         {% if request.user.is_staff %}
@@ -88,10 +99,12 @@
                             {{order.tracking_id}}
                         </td>
                         {% endif  %}
-        
+                        
+                       
                         <td class="px-6 py-4 text-right">
                             <a href="{{order.staff_order_update_absolute_url}}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
                         </td>
+                       
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -153,12 +166,5 @@
 
 
 {% block scripts %}
-<!-- Initialize datetimepicker -->
-<script>
-    $(function() {
-        $('.datetimepicker').datepicker({
-            format: 'YYYY-MM-DD'
-        });
-    });
-</script>
+
 {% endblock %}

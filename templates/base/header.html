@@ -98,7 +98,7 @@
               <span class="text-xs font-bold text-black">{{my_orders.count}}</span>
             </span>
           </a>
-          {% if request.user.is_staff %}
+          {% if perms.orders.change_order %}
           <ul class="hidden lg:flex ml-16 lg:w-auto lg:space-x-12">
             <li class="relative group">
               <a class="inline-flex items-center text-yellow-500 font-medium" href="#">
@@ -125,38 +125,41 @@
                       </svg>
                     </div>
                   </a>
-                  <a class="group relative flex p-5 hover:bg-gray-900 transition duration-200" href="{% url 'stats_view' %}">
-                    <div class="mr-5">
-                      <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M10.4717 6.33333V19.875M10.4717 6.33333C10.4717 6.33333 10.4717 4.77836 10.4717 4.25C10.4717 3.09941 11.4038 2.16667 12.5537 2.16667C13.7036 2.16667 14.6357 3.09941 14.6357 4.25C14.6357 5.40059 13.7036 6.33333 12.5537 6.33333C11.9319 6.33333 10.4717 6.33333 10.4717 6.33333ZM10.4717 6.33333C10.4717 6.33333 10.4717 4.31553 10.4717 3.72917C10.4717 2.29093 9.30649 1.125 7.86914 1.125C6.4318 1.125 5.2666 2.29093 5.2666 3.72917C5.2666 5.16741 6.4318 6.33333 7.86914 6.33333C8.72048 6.33333 10.4717 6.33333 10.4717 6.33333ZM3.18457 10.5H17.7588M3.18457 10.5C2.0347 10.5 1.10254 9.56726 1.10254 8.41667C1.10254 7.26607 2.0347 6.33333 3.18457 6.33333H17.7588C18.9087 6.33333 19.8408 7.26607 19.8408 8.41667C19.8408 9.56726 18.9087 10.5 17.7588 10.5M3.18457 10.5L3.18457 17.7917C3.18457 18.9423 4.11673 19.875 5.2666 19.875H15.6768C16.8266 19.875 17.7588 18.9423 17.7588 17.7917V10.5" stroke="#A1A4A8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                      </svg>
-                    </div>
-                    <div class="mr-24">
-                      <span class="block font-bold text-white">Performance</span>
-                      <span class="text-gray-500">View statistiques details </span>
-                    </div>
-                    <div class="hidden group-hover:block absolute right-0 top-1/2 mr-6 transform -translate-y-1/2 self-center">
-                      <svg width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12.4471 4.16675L18.2768 10.0001M18.2768 10.0001L12.4471 15.8334M18.2768 10.0001L3.28613 10.0001" stroke="#F2FF5A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-                      </svg>
-                    </div>
-                  </a>
-                  <a class="group relative flex p-5 hover:bg-gray-900 transition duration-200" href="#">
-                    <div class="mr-5">
-                      <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M10.4717 6.33333V19.875M10.4717 6.33333C10.4717 6.33333 10.4717 4.77836 10.4717 4.25C10.4717 3.09941 11.4038 2.16667 12.5537 2.16667C13.7036 2.16667 14.6357 3.09941 14.6357 4.25C14.6357 5.40059 13.7036 6.33333 12.5537 6.33333C11.9319 6.33333 10.4717 6.33333 10.4717 6.33333ZM10.4717 6.33333C10.4717 6.33333 10.4717 4.31553 10.4717 3.72917C10.4717 2.29093 9.30649 1.125 7.86914 1.125C6.4318 1.125 5.2666 2.29093 5.2666 3.72917C5.2666 5.16741 6.4318 6.33333 7.86914 6.33333C8.72048 6.33333 10.4717 6.33333 10.4717 6.33333ZM3.18457 10.5H17.7588M3.18457 10.5C2.0347 10.5 1.10254 9.56726 1.10254 8.41667C1.10254 7.26607 2.0347 6.33333 3.18457 6.33333H17.7588C18.9087 6.33333 19.8408 7.26607 19.8408 8.41667C19.8408 9.56726 18.9087 10.5 17.7588 10.5M3.18457 10.5L3.18457 17.7917C3.18457 18.9423 4.11673 19.875 5.2666 19.875H15.6768C16.8266 19.875 17.7588 18.9423 17.7588 17.7917V10.5" stroke="#A1A4A8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                      </svg>
-                    </div>
-                    <div class="mr-24">
-                      <span class="block font-bold text-white">Warnings</span>
-                      <span class="text-gray-500">Check errors here</span>
-                    </div>
-                    <div class="hidden group-hover:block absolute right-0 top-1/2 mr-6 transform -translate-y-1/2 self-center">
-                      <svg width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12.4471 4.16675L18.2768 10.0001M18.2768 10.0001L12.4471 15.8334M18.2768 10.0001L3.28613 10.0001" stroke="#F2FF5A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-                      </svg>
-                    </div>
-                  </a>
+                  {% if request.user.is_staff %}
+                    <a class="group relative flex p-5 hover:bg-gray-900 transition duration-200" href="{% url 'stats_view' %}">
+                      <div class="mr-5">
+                        <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M10.4717 6.33333V19.875M10.4717 6.33333C10.4717 6.33333 10.4717 4.77836 10.4717 4.25C10.4717 3.09941 11.4038 2.16667 12.5537 2.16667C13.7036 2.16667 14.6357 3.09941 14.6357 4.25C14.6357 5.40059 13.7036 6.33333 12.5537 6.33333C11.9319 6.33333 10.4717 6.33333 10.4717 6.33333ZM10.4717 6.33333C10.4717 6.33333 10.4717 4.31553 10.4717 3.72917C10.4717 2.29093 9.30649 1.125 7.86914 1.125C6.4318 1.125 5.2666 2.29093 5.2666 3.72917C5.2666 5.16741 6.4318 6.33333 7.86914 6.33333C8.72048 6.33333 10.4717 6.33333 10.4717 6.33333ZM3.18457 10.5H17.7588M3.18457 10.5C2.0347 10.5 1.10254 9.56726 1.10254 8.41667C1.10254 7.26607 2.0347 6.33333 3.18457 6.33333H17.7588C18.9087 6.33333 19.8408 7.26607 19.8408 8.41667C19.8408 9.56726 18.9087 10.5 17.7588 10.5M3.18457 10.5L3.18457 17.7917C3.18457 18.9423 4.11673 19.875 5.2666 19.875H15.6768C16.8266 19.875 17.7588 18.9423 17.7588 17.7917V10.5" stroke="#A1A4A8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                        </svg>
+                      </div>
+                      <div class="mr-24">
+                        <span class="block font-bold text-white">Performance</span>
+                        <span class="text-gray-500">View statistiques details </span>
+                      </div>
+                      <div class="hidden group-hover:block absolute right-0 top-1/2 mr-6 transform -translate-y-1/2 self-center">
+                        <svg width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M12.4471 4.16675L18.2768 10.0001M18.2768 10.0001L12.4471 15.8334M18.2768 10.0001L3.28613 10.0001" stroke="#F2FF5A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                        </svg>
+                      </div>
+                    </a>
+                    
+                    <a class="group relative flex p-5 hover:bg-gray-900 transition duration-200" href="#">
+                      <div class="mr-5">
+                        <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M10.4717 6.33333V19.875M10.4717 6.33333C10.4717 6.33333 10.4717 4.77836 10.4717 4.25C10.4717 3.09941 11.4038 2.16667 12.5537 2.16667C13.7036 2.16667 14.6357 3.09941 14.6357 4.25C14.6357 5.40059 13.7036 6.33333 12.5537 6.33333C11.9319 6.33333 10.4717 6.33333 10.4717 6.33333ZM10.4717 6.33333C10.4717 6.33333 10.4717 4.31553 10.4717 3.72917C10.4717 2.29093 9.30649 1.125 7.86914 1.125C6.4318 1.125 5.2666 2.29093 5.2666 3.72917C5.2666 5.16741 6.4318 6.33333 7.86914 6.33333C8.72048 6.33333 10.4717 6.33333 10.4717 6.33333ZM3.18457 10.5H17.7588M3.18457 10.5C2.0347 10.5 1.10254 9.56726 1.10254 8.41667C1.10254 7.26607 2.0347 6.33333 3.18457 6.33333H17.7588C18.9087 6.33333 19.8408 7.26607 19.8408 8.41667C19.8408 9.56726 18.9087 10.5 17.7588 10.5M3.18457 10.5L3.18457 17.7917C3.18457 18.9423 4.11673 19.875 5.2666 19.875H15.6768C16.8266 19.875 17.7588 18.9423 17.7588 17.7917V10.5" stroke="#A1A4A8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                        </svg>
+                      </div>
+                      <div class="mr-24">
+                        <span class="block font-bold text-white">Warnings</span>
+                        <span class="text-gray-500">Check errors here</span>
+                      </div>
+                      <div class="hidden group-hover:block absolute right-0 top-1/2 mr-6 transform -translate-y-1/2 self-center">
+                        <svg width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M12.4471 4.16675L18.2768 10.0001M18.2768 10.0001L12.4471 15.8334M18.2768 10.0001L3.28613 10.0001" stroke="#F2FF5A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                        </svg>
+                      </div>
+                    </a>
+                  {% endif %}
                 </div>
                 <div class="px-8 py-5">
                   <span class="block mb-2 text-sm font-medium text-gray-400">{{request.user}}</span>

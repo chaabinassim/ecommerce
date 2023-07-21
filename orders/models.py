@@ -256,11 +256,13 @@ class Order(models.Model):
         message="Phone number must be 10 digits long and start with 05, 06, or 07."
     )
     phone_number = models.CharField(validators=[phone_regex], max_length=10)
-    created_on  = models. DateTimeField(auto_now_add=True)
+    created_on  = models. DateField(auto_now_add=True)
+    created_on_time  = models. TimeField(auto_now_add=True,null=True,blank=True)
     last_modified =  models.DateTimeField(auto_now=True)
     first_name     = models.CharField(max_length=128,)
     last_name    = models.CharField(max_length=128)
     full_adress    = models.CharField(max_length=128)
+    is_stopdesk    =models.BooleanField(default=False,null=True,blank=True)
     # yalidine 
     tracking_id     = models.CharField(max_length=128,null=True,blank=True)
     error = models.CharField(

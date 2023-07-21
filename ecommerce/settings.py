@@ -137,7 +137,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
@@ -161,5 +160,7 @@ NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd"
 TAILWIND_APP_NAME = 'theme'
 
 
-
+#allauth
 SITE_ID = 1
+ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
+LOGIN_REDIRECT_URL = 'home'  # Replace 'home' with the name of your home URL pattern

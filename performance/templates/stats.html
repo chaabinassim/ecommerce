@@ -7,13 +7,39 @@
     <div class="container px-4 mx-auto">
       <div class="flex flex-wrap -mx-4">
         <div class="w-full lg:w-4/12 xl:w-3/12 px-4">
-          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-1 gap-6 md:gap-2 lg:gap-6 px-4 lg:pt-5 pb-20 lg:pb-9 border ">
-            <h6 class="font-bold  mb-5"> Filter</h6>
-            <div class="container mx-auto flex justify-center items-center ">
+          <div class="p-5 border rounded">
+            <div class="w-full">
                 <!-- Render the filter form -->
-                <form method="GET">
-                    {{ order_filter.form.as_p }}
-                    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Apply Filters</button>
+                <form method="GET" action="{% url 'stats_view' %}">
+                    {% if  order_filter.form.non_field_errors %}
+                        <div class="mb-4 text-red-500">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+ 
+                    <div class="mb-4">
+                        <label for="id_staff_member" class="block font-medium">Staff Member:</label>
+                        {{ order_filter.form.staff_member }}
+                        {% if order_filter.form.staff_member.errors %}
+                            <div class="mt-1 text-red-500">
+                                {{ order_filter.form.staff_member.errors|join:", " }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-4">
+                          <label for="id_start_date" class="block font-medium">Start Date:</label>
+                          <input type="date" name="start_date" value="{{ order_filter.form.start_date.value|default_if_none:'' }}" class="w-full rounded border-gray-300 border p-2 focus:outline-none focus:border-blue-500">
+                    </div>
+              
+                    <div class="mb-4">
+                        <label for="id_end_date" class="block font-medium">End Date:</label>
+                        <input type="date" name="end_date" value="{{ order_filter.form.end_date.value|default_if_none:'' }}" class="w-full rounded border-gray-300 border p-2 focus:outline-none focus:border-blue-500">
+                    </div>
+            
+                    
+            
+                    <button type="submit" class="w-full inline-block px-12 py-4 text-center text-black font-bold bg-yellow-500 hover:bg-yellow-600 transition duration-200">Apply Filters</button>
                 </form>
              
               </div>
@@ -22,34 +48,34 @@
         <div class="w-full lg:w-8/12 xl:9/12 px-4">
 
             <div class="grid grid-cols-3 gap-4 mt-8">
-                <div class="bg-white rounded shadow p-4">
+                <div class="bg-white rounded shadow-sm p-4">
                     <h3 class="text-lg font-semibold">Total Orders</h3>
                     <p class="text-3xl font-bold">{{ stats.total_orders }}</p>
                 </div>
         
-                <div class="bg-white rounded shadow p-4">
+                <div class="bg-white rounded shadow-sm p-4">
                     <h3 class="text-lg font-semibold">Confirmed Orders</h3>
                     <p class="text-3xl font-bold">{{ stats.confirmed_orders }}</p>
                 </div>
         
-                <div class="bg-white rounded shadow p-4">
+                <div class="bg-white rounded shadow-sm p-4">
                     <h3 class="text-lg font-semibold">Canceled Orders</h3>
                     <p class="text-3xl font-bold">{{ stats.canceled_orders }}</p>
                 </div>
             </div>
         
             <div class="grid grid-cols-3 gap-4 mt-8">
-                <div class="bg-white rounded shadow p-4">
+                <div class="bg-white rounded shadow-sm p-4">
                     <h3 class="text-lg font-semibold">Total Orders Percentage</h3>
                     <p class="text-3xl font-bold">{{ stats.total_orders_percentage|floatformat:2 }}%</p>
                 </div>
         
-                <div class="bg-white rounded shadow p-4">
+                <div class="bg-white rounded shadow-sm p-4">
                     <h3 class="text-lg font-semibold">Confirmed Orders Percentage</h3>
                     <p class="text-3xl font-bold">{{ stats.confirmed_orders_percentage|floatformat:2 }}%</p>
                 </div>
         
-                <div class="bg-white rounded shadow p-4">
+                <div class="bg-white rounded shadow-sm p-4">
                     <h3 class="text-lg font-semibold">Canceled Orders Percentage</h3>
                     <p class="text-3xl font-bold">{{ stats.canceled_orders_percentage|floatformat:2 }}%</p>
                 </div>
@@ -65,13 +91,6 @@
 {% endblock content %}
 
 {% block scripts %}
-<!-- Initialize datetimepicker -->
-<script>
-    $(function() {
-        $('.datetimepicker').datepicker({
-            format: 'YYYY-MM-DD'
-        });
-    });
-</script>
+
 
 {% endblock %}

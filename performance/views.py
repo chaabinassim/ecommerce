@@ -1,13 +1,22 @@
 from django.shortcuts import render
 from orders.models import Order
-from .filters import OrderFilterForStat
+from .filters import OrderFilter
 
 def stats_view(request):
-    order_filter = OrderFilterForStat(request.GET, queryset=Order.objects.all())
-
+    order_filter = OrderFilter(request.GET, queryset=Order.objects.all())
     filtered_orders = order_filter.qs
 
-    # Calculate statistics based on the filtered orders
+    # Apply additional filtering based on selected staff member
+    staff_member = request.GET.get('staff_member')
+    if staff_member:
+        filtered_orders = filtered_orders.filter(staff_member=staff_member)
+
+    # Apply additional filtering based on selected date range
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+    if start_date and end_date:
+        filtered_orders = filtered_orders.filter(created_on__range=[start_date, end_date])
+
     total_orders = filtered_orders.count()
     confirmed_orders = filtered_orders.filter(status__name='Confirmed').count()
     canceled_orders = filtered_orders.filter(status__name='Canceled').count()

@@ -32,6 +32,28 @@ class Commune(models.Model):
         return self.name
 
 
+class Center(models.Model):
+    center_id = models.IntegerField()
+    wilaya = models.ForeignKey(Wilaya, on_delete=models.CASCADE)
+    commune = models.ForeignKey(Commune, on_delete=models.CASCADE)
+    name = models.CharField(max_length=122)
+    display_name   = models.CharField(max_length=122,null=True,blank=True)
+    address = models.CharField(max_length=122,null=True,blank=True)
+    
+
+    def __str__(self):
+        return self.name
+
+class Fee(models.Model):
+    
+    wilaya   = models.ForeignKey(Wilaya, on_delete=models.CASCADE)
+    home_fee = models.PositiveIntegerField()
+    desk_fee = models.PositiveIntegerField()
+    
+
+    def __str__(self):
+        return f"{self.wilaya}-{self.home_fee}"
+
     
 class Setting(models.Model):
     api_id    = models.CharField(max_length=128)

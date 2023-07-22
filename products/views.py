@@ -16,6 +16,7 @@ def product_detail(request, product_slug):
     product = get_object_or_404(Product, slug=product_slug)
     session ,created= Session.objects.new_or_get(request)
     states = Wilaya.objects.all()
+    fees = Fee.objects.all()
     if request.method == 'POST':
         form = OrderForm(request.POST)
         if form.is_valid():
@@ -30,6 +31,7 @@ def product_detail(request, product_slug):
         'product':product,
         'states':states,
         'form':form,
+        'fees':fees
     }
   
     return render(request, 'product_detail.html', context)

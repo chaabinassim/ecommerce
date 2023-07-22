@@ -11,45 +11,88 @@
           <div class="max-w-2xl">
             
               <div class="mb-10 pb-12 border-b border-blueGray-800">
-                <h6 class="font-bold text-white mb-6">Order status</h6>
                 <div class="pb-12 mb-8 border-b border-blueGray-800">
                  
                   <form method="post"> 
                     {% csrf_token %} 
-                    {{ form.non_field_errors }}
-                    <div class="mb-6">
-                    {{ form.status }} 
+
+                    {% if  form.non_field_errors %}
+                      <div class="mb-4 text-red-500">
+                          {{ form.non_field_errors }}
+                      </div>
+                     {% endif %}
+
+                     <div class="mb-4">
+                      <label for="id_status" class="block font-medium text-white">Status</label>
+                      {{ form.status }}
+                      {% if form.status.errors %}
+                          <div class="mt-1 text-red-500">
+                              {{ form.status.errors|join:", " }}
+                          </div>
+                      {% endif %}
                     </div>
+
+
+                    <div class="mb-4">
+                      <label for="id_status" class="block font-medium text-white">stop desk</label>
+                      {{ form.is_stopdesk }}
+                      {% if form.is_stopdesk.errors %}
+                          <div class="mt-1 text-red-500">
+                              {{ form.is_stopdesk.errors|join:", " }}
+                          </div>
+                      {% endif %}
+                    </div>
+
+                    <div class="mb-4">
+                      <label for="id_status" class="block font-medium text-white">wilaya</label>
+                      {{ form.state }}
+                      {% if form.state.errors %}
+                          <div class="mt-1 text-red-500">
+                              {{ form.state.errors|join:", " }}
+                          </div>
+                      {% endif %}
+                    </div>
+
+                    <div class="mb-4">
+                      <label for="id_status" class="block font-medium text-white">center</label>
+                      {{ form.center }}
+                      {% if form.center.errors %}
+                          <div class="mt-1 text-red-500">
+                              {{form.center.errors|join:", " }}
+                          </div>
+                      {% endif %}
+                    </div>
+                    
                     <button class="block px-6 py-3 text-center font-bold text-black bg-yellow-500 hover:bg-yellow-600 transition duration-200 w-full" type="submit">Update</button>
                   </form> 
                 </div>
                 <h6 class="font-bold text-white mb-6">Contact Information</h6>
                 <div class="flex flex-wrap -mx-2 mb-6">
                   <div class="w-full md:w-1/2 px-2 mb-6 md:mb-0">
-                    <label class="block mb-2 text-gray-400 text-sm font-medium" for="">First Name</label>
+                    <p class="block mb-2 text-gray-400 text-sm font-medium">First Name</p>
                     <p class="text-white">{{order.first_name}}</p>
                   </div>
                   <div class="w-full md:w-1/2 px-2">
-                    <label class="block mb-2 text-gray-400 text-sm font-medium" for="">Last Name</label>
+                    <p class="block mb-2 text-gray-400 text-sm font-medium" >Last Name</p>
                     <p class="text-white">{{order.last_name}}</p>
                   </div>
                 </div>
                 <div class="mb-6">
-                  <label class="block mb-2 text-gray-400 text-sm font-medium" for="">Phone number</label>
+                  <p class="block mb-2 text-gray-400 text-sm font-medium" >Phone number</p>
                   <p class="text-white">{{order.phone_number}}</p>
                 </div>
                 <div class="mb-6">
-                  <label class="block mb-2 text-gray-400 text-sm font-medium" for="">Address</label>
+                  <p class="block mb-2 text-gray-400 text-sm font-medium">Address</p>
                   <p class="text-white">{{order.full_adress}}</p>
                 </div>
                 
                 <div class="flex flex-wrap -mx-2 mb-6">
                   <div class="w-full md:w-1/2 px-2 mb-6 md:mb-0">
-                    <label class="block mb-2 text-gray-400 text-sm font-medium" for="">Wilaya</label>
+                    <label class="block mb-2 text-gray-400 text-sm font-medium" >Wilaya</label>
                     <p class="text-white">{{order.state}}</p>
                   </div>
                   <div class="w-full md:w-1/2 px-2">
-                    <label class="block mb-2 text-gray-400 text-sm font-medium" for="">Commune</label>
+                    <p class="block mb-2 text-gray-400 text-sm font-medium" >Commune</p>
                     <p class="text-white">{{order.city}}</p>
                   </div>
                 </div>
@@ -98,3 +141,55 @@
   </div>
 </section>
 {% endblock  %}
+
+{% block scripts  %}
+
+<script>
+    const stateCenterData = {
+        {% for state in states %}
+        "{{ state.id }}": [
+            {% for center in state.center_set.all %}
+            { "id": "{{ center.id }}", "name": "{{ center.display_name }}" },
+            {% endfor %}
+        ],
+        {% endfor %}
+    };
+
+    const stateSelect = document.querySelector('#id_state');
+    const centerSelect = document.querySelector('#id_center');
+
+    stateSelect.addEventListener('change', () => {
+        const selectedState = stateSelect.value;
+        if (selectedState) {
+            populateCenterOptions(selectedState);
+        } else {
+            clearCenterOptions();
+        }
+    });
+
+
+    $(document).ready(function() {
+      const selectedState = stateSelect.value;
+      if (selectedState) {
+          populateCenterOptions(selectedState);
+      } else {
+          clearCenterOptions();
+      }
+    });
+
+    function populateCenterOptions(stateId) {
+        const centers = stateCenterData[stateId];
+        centerSelect.innerHTML = '<option value="" selected="">Center</option>';
+        centers.forEach(center => {
+            const option = document.createElement('option');
+            option.value = center.id;
+            option.text = center.name;
+            centerSelect.appendChild(option);
+        });
+    }
+
+    function clearCenterOptions() {
+        centerSelect.innerHTML = '<option value="">Select a center first</option>';
+    }
+</script>
+{% endblock scripts  %}

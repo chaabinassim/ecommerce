@@ -108,8 +108,28 @@
             
                     <div class="mb-6">
                       {{ form.quantity.errors }}
-                      {{ form.quantity }}
+                      <div class="flex items-center">
+                        <button class="rounded-full w-8 h-8 bg-gray-300 text-lg text-gray-600 focus:outline-none" type="button" id="minus-btn">-</button>
+                        {{ form.quantity }}
+                        <button class="rounded-full w-8 h-8 bg-gray-300 text-lg text-gray-600 focus:outline-none" type="button" id="plus-btn">+</button>
+                      </div>
                    </div>
+                   <!-- recap-->
+                   <div class="p-8">
+                    <div class="flex mb-5 items-center justify-between">
+                      <span class="text-sm font-medium text-gray-400">Subtotal</span>
+                      <span class="text-sm font-medium text-white"></span>
+                    </div>
+                    <div class="flex mb-5 items-center justify-between">
+                      <span class="text-sm font-medium text-gray-400">Shipping</span>
+                      <span class="text-sm font-medium text-white" id="state_fee"></span>
+                    </div>
+                    
+                    <div class="flex mb-8 items-center justify-between">
+                      <span class="text-sm font-bold text-white">Total To pay</span>
+                      <span class="text-sm font-bold text-white" id="order-total"></span>
+                    </div>
+                  </div>
                    <button type="submit" class="w-full inline-block px-12 py-4 text-center text-black font-bold bg-yellow-500 hover:bg-yellow-600 transition duration-200"> order</button>
                   </form>
                 </div>
@@ -127,6 +147,13 @@
 
 {% block scripts  %}
 <script>
+
+  const stateFeeData = {
+        {% for fee in fees %}
+        "{{ fee.wilaya.id }}":{{ fee.home_fee }} ,
+        {% endfor %}
+    };
+
     const stateCityData = {
         {% for state in states %}
         "{{ state.id }}": [
@@ -139,15 +166,47 @@
 
     const stateSelect = document.querySelector('#id_state');
     const citySelect = document.querySelector('#id_city');
+    const stateFee = document.querySelector('#state_fee');
 
     stateSelect.addEventListener('change', () => {
         const selectedState = stateSelect.value;
         if (selectedState) {
             populateCityOptions(selectedState);
+            updateStateFee(selectedState)
+            updateOrderTotal();
         } else {
             clearCityOptions();
         }
     });
+
+    $("#plus-btn").click(function() {
+      var quantityField = $("#id_quantity");
+      var currentValue = parseInt(quantityField.val());
+      quantityField.val(currentValue + 1);
+      updateOrderTotal();
+    });
+
+    // Function to decrease the quantity, minimum value is 1
+    $("#minus-btn").click(function() {
+      var quantityField = $("#id_quantity");
+      var currentValue = parseInt(quantityField.val());
+      if (currentValue > 1) {
+        quantityField.val(currentValue - 1);
+        updateOrderTotal();
+      }
+    });
+
+    
+
+    function updateOrderTotal() {
+      var quantity = parseInt($("#id_quantity").val());
+      var productPrice = {{product.price}};
+      var shippingCost = parseFloat($("#state_fee").text());
+
+      var orderTotal = (quantity * productPrice) + shippingCost;
+
+      $("#order-total").text(orderTotal.toFixed(2));
+    }
 
     function populateCityOptions(stateId) {
         const cities = stateCityData[stateId];
@@ -163,5 +222,11 @@
     function clearCityOptions() {
         citySelect.innerHTML = '<option value="">Select a state first</option>';
     }
+
+    function updateStateFee(stateId) {
+      stateFee.innerHTML = stateFeeData[stateId];
+    }
+
+
 </script>
 {% endblock %}

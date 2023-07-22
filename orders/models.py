@@ -51,7 +51,10 @@ def order_staff_member_pre_save_receiver(sender, instance, *args, **kwargs):
             
 
             
-
+def is_stopdesk_pre_save_receiver(sender, instance, *args, **kwargs):
+    if instance.is_stopdesk and instance.center:
+        instance.state = instance.center.wilaya
+        instance.city = instance.center.commune
 
 
 def create_parcel_receiver(sender, instance, *args, **kwargs):
@@ -249,6 +252,7 @@ class Order(models.Model):
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
     state = models.ForeignKey(Wilaya, on_delete=models.CASCADE)
     city = models.ForeignKey(Commune, on_delete=models.CASCADE)
+    center = models.ForeignKey(Center, on_delete=models.CASCADE, null=True, blank=True)
     status = models.ForeignKey(OrderStatus, on_delete=models.SET_NULL, null=True, blank=True)
     staff_member = models.ForeignKey(StaffMember, on_delete=models.SET_NULL, null=True, blank=True)
     phone_regex = RegexValidator(
@@ -322,9 +326,10 @@ class Order(models.Model):
         return True
     
     @property
-    def is_stopdesk(self):
-        return False
+    def stopdesk_id(self):
+        return self.center.center_id
     
+
     @property
     def has_exchange(self):
         return False
@@ -341,7 +346,9 @@ class Order(models.Model):
 pre_save.connect(order_status_pre_save_receiver, sender=Order)
 pre_save.connect(order_staff_member_pre_save_receiver, sender=Order)
 pre_save.connect(order_total_receiver, sender=Order)
+pre_save.connect(is_stopdesk_pre_save_receiver, sender=Order)
 pre_save.connect(create_parcel_receiver, sender=Order)
+
 class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
@@ -359,6 +366,7 @@ class OrderSerializer(serializers.ModelSerializer):
             'freeshipping',
             'is_stopdesk',
             'has_exchange',
+            'stopdesk_id',
         ]
 
 

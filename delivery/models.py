@@ -1,7 +1,7 @@
 from django.db import models
-
+from django.db.models.signals import pre_save, post_save
 # Create your models here.
-
+import requests
 
 
 
@@ -65,3 +65,4 @@ class Setting(models.Model):
 
     def __str__(self):
         return self.api_id
+

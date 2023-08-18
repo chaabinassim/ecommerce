@@ -1,10 +1,23 @@
 {% load static %}
+{% url 'home' as home_url %}
+{% url 'products' as products_url %}
+{% url 'collections' as collections_url %}
+
 <section>
     <nav class="relative px-6 lg:px-16 py-9 bg-black">
       <div class="flex items-center">
         <a class="inline-block text-lg font-bold" href="{% url 'home' %}">
-          <img class="h-6" src="{% static 'assets/logos/vendia.svg' %}" alt="" width="auto">
+          {% if navbar_section.image %}
+          <img class="h-6" src="{{navbar_section.image.url}}" alt="" width="auto">
+          {% else%}
+            {% if navbar_section.title %}
+            <p class="text-white">{{navbar_section.title}}</p> 
+            {% else %}
+            <p class="text-white">Brand Name </p>
+            {% endif %}
+          {% endif %}
         </a>
+          
         <div class="lg:hidden ml-auto">
           <button class="navbar-burger flex items-center p-3 text-white hover:text-yellow-500">
             <svg class="block h-4 w-4" stroke="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
@@ -15,23 +28,20 @@
         </div>
         <ul class="hidden lg:flex ml-16 lg:w-auto lg:space-x-12">
           <li class="relative group">
-            <a class="inline-flex items-center text-yellow-500 font-medium" href="#">
-              <span class="mr-3">Why Vendia?</span>
+            <a class="inline-flex items-center {% if request.path == collections_url %} text-yellow-500 {% else %} text-white {% endif %} font-medium" href="#">
+              <span class="mr-3">Collections</span>
               <svg width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M10.6667 6L6.00001 1.33333L1.33334 6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
               </svg>
             </a>
             <div class="hidden group-hover:block absolute top-full left-0 px-2 pt-10 bg-black min-w-max z-50">
               <div class="px-3 pb-2 border-b border-blueGray-800">
-                <a class="group relative flex p-5 hover:bg-gray-900 transition duration-200" href="#">
-                  <div class="mr-5">
-                    <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M10.4717 6.33333V19.875M10.4717 6.33333C10.4717 6.33333 10.4717 4.77836 10.4717 4.25C10.4717 3.09941 11.4038 2.16667 12.5537 2.16667C13.7036 2.16667 14.6357 3.09941 14.6357 4.25C14.6357 5.40059 13.7036 6.33333 12.5537 6.33333C11.9319 6.33333 10.4717 6.33333 10.4717 6.33333ZM10.4717 6.33333C10.4717 6.33333 10.4717 4.31553 10.4717 3.72917C10.4717 2.29093 9.30649 1.125 7.86914 1.125C6.4318 1.125 5.2666 2.29093 5.2666 3.72917C5.2666 5.16741 6.4318 6.33333 7.86914 6.33333C8.72048 6.33333 10.4717 6.33333 10.4717 6.33333ZM3.18457 10.5H17.7588M3.18457 10.5C2.0347 10.5 1.10254 9.56726 1.10254 8.41667C1.10254 7.26607 2.0347 6.33333 3.18457 6.33333H17.7588C18.9087 6.33333 19.8408 7.26607 19.8408 8.41667C19.8408 9.56726 18.9087 10.5 17.7588 10.5M3.18457 10.5L3.18457 17.7917C3.18457 18.9423 4.11673 19.875 5.2666 19.875H15.6768C16.8266 19.875 17.7588 18.9423 17.7588 17.7917V10.5" stroke="#A1A4A8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    </svg>
-                  </div>
+                {% for collection in featured_collections %}
+                <a class="group relative flex p-5 hover:bg-gray-900 transition duration-200" href="{{collection.get_absolute_url}}">
+                  
                   <div class="mr-24">
-                    <span class="block font-bold text-white">Category Text</span>
-                    <span class="text-gray-500">Add your details here</span>
+                    <span class="block font-bold text-white">{{collection.name}}</span>
+                    <span class="text-gray-500">{{collections.description}}</span>
                   </div>
                   <div class="hidden group-hover:block absolute right-0 top-1/2 mr-6 transform -translate-y-1/2 self-center">
                     <svg width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -39,47 +49,18 @@
                     </svg>
                   </div>
                 </a>
-                <a class="group relative flex p-5 hover:bg-gray-900 transition duration-200" href="#">
-                  <div class="mr-5">
-                    <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M10.4717 6.33333V19.875M10.4717 6.33333C10.4717 6.33333 10.4717 4.77836 10.4717 4.25C10.4717 3.09941 11.4038 2.16667 12.5537 2.16667C13.7036 2.16667 14.6357 3.09941 14.6357 4.25C14.6357 5.40059 13.7036 6.33333 12.5537 6.33333C11.9319 6.33333 10.4717 6.33333 10.4717 6.33333ZM10.4717 6.33333C10.4717 6.33333 10.4717 4.31553 10.4717 3.72917C10.4717 2.29093 9.30649 1.125 7.86914 1.125C6.4318 1.125 5.2666 2.29093 5.2666 3.72917C5.2666 5.16741 6.4318 6.33333 7.86914 6.33333C8.72048 6.33333 10.4717 6.33333 10.4717 6.33333ZM3.18457 10.5H17.7588M3.18457 10.5C2.0347 10.5 1.10254 9.56726 1.10254 8.41667C1.10254 7.26607 2.0347 6.33333 3.18457 6.33333H17.7588C18.9087 6.33333 19.8408 7.26607 19.8408 8.41667C19.8408 9.56726 18.9087 10.5 17.7588 10.5M3.18457 10.5L3.18457 17.7917C3.18457 18.9423 4.11673 19.875 5.2666 19.875H15.6768C16.8266 19.875 17.7588 18.9423 17.7588 17.7917V10.5" stroke="#A1A4A8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    </svg>
-                  </div>
-                  <div class="mr-24">
-                    <span class="block font-bold text-white">Category Text</span>
-                    <span class="text-gray-500">Add your details here</span>
-                  </div>
-                  <div class="hidden group-hover:block absolute right-0 top-1/2 mr-6 transform -translate-y-1/2 self-center">
-                    <svg width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M12.4471 4.16675L18.2768 10.0001M18.2768 10.0001L12.4471 15.8334M18.2768 10.0001L3.28613 10.0001" stroke="#F2FF5A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-                    </svg>
-                  </div>
-                </a>
-                <a class="group relative flex p-5 hover:bg-gray-900 transition duration-200" href="#">
-                  <div class="mr-5">
-                    <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M10.4717 6.33333V19.875M10.4717 6.33333C10.4717 6.33333 10.4717 4.77836 10.4717 4.25C10.4717 3.09941 11.4038 2.16667 12.5537 2.16667C13.7036 2.16667 14.6357 3.09941 14.6357 4.25C14.6357 5.40059 13.7036 6.33333 12.5537 6.33333C11.9319 6.33333 10.4717 6.33333 10.4717 6.33333ZM10.4717 6.33333C10.4717 6.33333 10.4717 4.31553 10.4717 3.72917C10.4717 2.29093 9.30649 1.125 7.86914 1.125C6.4318 1.125 5.2666 2.29093 5.2666 3.72917C5.2666 5.16741 6.4318 6.33333 7.86914 6.33333C8.72048 6.33333 10.4717 6.33333 10.4717 6.33333ZM3.18457 10.5H17.7588M3.18457 10.5C2.0347 10.5 1.10254 9.56726 1.10254 8.41667C1.10254 7.26607 2.0347 6.33333 3.18457 6.33333H17.7588C18.9087 6.33333 19.8408 7.26607 19.8408 8.41667C19.8408 9.56726 18.9087 10.5 17.7588 10.5M3.18457 10.5L3.18457 17.7917C3.18457 18.9423 4.11673 19.875 5.2666 19.875H15.6768C16.8266 19.875 17.7588 18.9423 17.7588 17.7917V10.5" stroke="#A1A4A8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    </svg>
-                  </div>
-                  <div class="mr-24">
-                    <span class="block font-bold text-white">Category Text</span>
-                    <span class="text-gray-500">Add your details here</span>
-                  </div>
-                  <div class="hidden group-hover:block absolute right-0 top-1/2 mr-6 transform -translate-y-1/2 self-center">
-                    <svg width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M12.4471 4.16675L18.2768 10.0001M18.2768 10.0001L12.4471 15.8334M18.2768 10.0001L3.28613 10.0001" stroke="#F2FF5A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-                    </svg>
-                  </div>
-                </a>
+                {% endfor %}
               </div>
+              
               <div class="px-8 py-5">
-                <span class="block mb-2 text-sm font-medium text-gray-400">Documentation</span>
-                <a class="block mb-2 font-medium text-yellow-500 hover:text-yellow-600" href="#">Get the most out of the platform</a><a class="block font-medium text-yellow-500 hover:text-yellow-600" href="#">See more components</a>
+                <a class="block font-medium text-yellow-500 hover:text-yellow-600 mb-2" href="{% url 'collections' %}">Explore our diverse hat collections</a>
+                <a class="block  font-medium text-yellow-500 hover:text-yellow-600" href="#">Learn about our hats</a>
               </div>
+
+            
             </div>
           </li>
-          <li><a class="inline-block text-gray-50 hover:text-yellow-500 font-medium" href="#">Browse</a></li>
-          <li><a class="inline-block text-gray-50 hover:text-yellow-500 font-medium" href="#">Resources</a></li>
+          <li><a class="inline-block text-gray-50 hover:text-yellow-500 font-medium {% if request.path == products_url %} text-yellow-500 {% else %} text-white {% endif %}" href="{% url 'products' %}">Products</a></li>
           <li><a class="inline-block text-gray-50 hover:text-yellow-500 font-medium" href="#">Brands</a></li>
         </ul>
         <div class="hidden lg:inline-flex items-center ml-auto">
@@ -163,7 +144,8 @@
                 </div>
                 <div class="px-8 py-5">
                   <span class="block mb-2 text-sm font-medium text-gray-400">{{request.user}}</span>
-                  <a class="block mb-2 font-medium text-yellow-500 hover:text-yellow-600" href="#">Get the most out of the platform</a><a class="block font-medium text-yellow-500 hover:text-yellow-600" href="#">See more components</a>
+                  <a class="block mb-2 font-medium text-yellow-500 hover:text-yellow-600" href="#">Get the most out of the platform</a>
+                  <a href="{% url 'account_logout' %}" class="block font-medium text-yellow-500 hover:text-yellow-600">Logout</a>
                 </div>
               </div>
             </li>
@@ -176,8 +158,16 @@
       <div class="navbar-backdrop fixed inset-0 bg-gray-800 opacity-25"></div>
       <nav class="relative flex flex-col py-6 px-6 w-full h-full bg-white border-r overflow-y-auto">
         <div class="flex items-center mb-8">
-          <a class="mr-auto text-2xl font-medium leading-none" href="#">
-            <img class="h-6" src="{% static 'assets/logos/vendia-dark.svg' %}" alt="" width="auto">
+          <a class="mr-auto text-lg font-medium leading-none" href="#">
+            {% if navbar_section.image %}
+            <img class="h-6" src="{{navbar_section.image.url}}" alt="" width="auto">
+            {% else%}
+              {% if navbar_section.title %}
+              <p class="">{{navbar_section.title}}</p> 
+              {% else %}
+              <p class="">Brand Name </p>
+              {% endif %}
+            {% endif %}
           </a>
           <button class="navbar-close">
             <svg class="h-6 w-6 text-gray-500 cursor-pointer hover:text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -187,14 +177,24 @@
         </div>
         <div>
           <ul>
-            <li class="mb-1"><a class="block p-4 font-medium text-black hover:bg-gray-50" href="#">Why Vendia?</a></li>
-            <li class="mb-1"><a class="block p-4 font-medium text-black hover:bg-gray-50" href="#">Browse</a></li>
-            <li class="mb-1"><a class="block p-4 font-medium text-black hover:bg-gray-50" href="#">Resources</a></li>
-            <li class="mb-1"><a class="block p-4 font-medium text-black hover:bg-gray-50" href="#">Brands</a></li>
+            <li class="mb-1"><a class="block p-4 font-medium text-black hover:bg-gray-50" href="{% url 'home' %}">Homme</a></li>
+            <li class="mb-1"><a class="block p-4 font-medium text-black hover:bg-gray-50" href="{% url 'collections' %}">collections</a></li>
+            {% if perms.orders.change_order %}
+            <li class="mb-1"><a class="block p-4 font-medium text-black hover:bg-gray-50" href="{% url 'staff_view' %}">Orders</a></li>
+              {% if request.user.is_staff %}
+              <li class="mb-1"><a class="block p-4 font-medium text-black hover:bg-gray-50" href="{% url 'stats_view' %}">Performance</a></li>
+              <li class="mb-1"><a class="block p-4 font-medium text-black hover:bg-gray-50" href="#">Warnings</a></li>
+              {% endif  %}
+            {% endif  %}
           </ul>
         </div>
+       
         <div class="mt-auto">
-          <div class="pt-6"><a class="block mb-2 py-3 text-sm text-center border border-gray-200 hover:border-gray-400 font-bold" href="#">Login</a><a class="block py-3 text-sm text-center text-black bg-yellow-500 hover:bg-yellow-600 font-bold transition duration-200" href="#">Sign In</a></div>
+          {% if  request.user.is_authenticated %}
+          <a class="block py-3 text-sm text-center text-black bg-yellow-500 hover:bg-yellow-600 font-bold transition duration-200" href="{% url 'account_logout' %}">Logout</a>
+          {% else %}
+          <a class="block py-3 text-sm text-center text-black bg-yellow-500 hover:bg-yellow-600 font-bold transition duration-200" href="{% url 'account_login' %}">Login</a>
+          {% endif %}
         </div>
       </nav>
     </div>

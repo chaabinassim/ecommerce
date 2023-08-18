@@ -1,0 +1,20 @@
+{% load static %}
+<div class="w-full lg:w-1/3 px-4 lg:px-8 mb-12">
+    <a class="group block" href="{{collection.get_absolute_url}}">
+        <img class="block mb-6 w-full object-cover" src="{% if collection.image %} {{ collection.image.url }}   {% else %} https://placehold.co/600x600  {% endif %}" alt="">
+      <div class="max-w-xs">
+        <h6 class="font-bold text-white group-hover:text-yellow-500 mb-3">
+          {% if collection.name %}
+            {{ collection.name }}
+          {% else %}
+            Default Name 
+          {% endif %}
+        </h6>
+        {% if collection.description %}
+          <p class="text-gray-500">{{ collection.description }}</p>
+        {% else %}
+          <p class="text-gray-500">Default Description if Description is not provided</p>
+        {% endif %}
+      </div>
+    </a>
+  </div>

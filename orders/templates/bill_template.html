@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Bill</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border: 1px solid #ccc;
+        }
+        .header {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .section-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .info {
+            margin-bottom: 20px;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .table th, .table td {
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+        .table th {
+            background-color: #f2f2f2;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">Bill #{{ order.id }}</div>
+        <div class="info">
+            <div class="section-title">Contact Information</div>
+            <p>Name: {{ order.first_name }} {{ order.last_name }}</p>
+            <p>Full Address: {{ order.full_address }}</p>
+            <p>State: {{ order.state }}</p>
+            <p>City: {{ order.city }}</p>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Discounted Price</th>
+                    <th>Delivery Fee</th>
+                    <th>Order Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ order.product.name }}</td>
+                    <td>{{ order.quantity }}</td>
+                    <td>${{ order.product.discounted_price }}</td>
+                    <td>${{ order.state.fee_set.first.home_fee }}</td>
+                    <td>${{ order.order_total }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

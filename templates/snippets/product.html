@@ -1,0 +1,19 @@
+{% load static %}
+<div class="w-full md:w-1/2 lg:w-1/4 mb-8 px-4 xl:px-8">
+    <a class="group block" href="{{product.get_absolute_url}}">
+        <img class="h-88 w-full object-cover transition-transform duration-500 transform hover:scale-120 mb-2" src="{% if product.image %}{{ product.image.url }}{% else %} https://placehold.co/600x600 {% endif %}" alt="">
+      {% if product.discount %}
+      <span class="text-sm  text-gray-500 line-through">{{ product.price|floatformat:"0" }} DA</span>
+      <span class="text-md font-bold text-yellow-500">{{ product.discounted_price|floatformat:"0" }} DA</span>
+      {% else %}
+      <span class="text-md font-bold text-yellow-500">{{ product.price|floatformat:"0" }} DA</span>
+      {% endif %}
+      <h6 class="font-bold text-md text-white mt-2">
+        {% if product.name %}
+          {{ product.name }}
+        {% else %}
+          Default Product Name if Name is not provided
+        {% endif %}
+      </h6>
+    </a>
+  </div>

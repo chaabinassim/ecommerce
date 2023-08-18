@@ -111,40 +111,53 @@
             </table>
            
             <!--pagination-->
-            <section class="py-5  mt-5">
-                <div class="container mx-auto px-4">
+            <section class="py-5 mt-5">
+              <div class="container mx-auto px-4">
                   <nav>
-                    <ul class="flex items-center justify-center">
-                    {% if page_obj.has_previous %}
-                      <li>
-                        <a class="flex w-9 h-9 items-center justify-center bg-black text-white hover:text-gray-200" href="?page={{ page_obj.previous_page_number }}" aria-label="previous">
-                          <svg width="7" height="12" viewBox="0 0 7 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M6 10.6666L1.33333 5.99992L6 1.33325" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                          </svg>
-                        </a>
-                      </li>
-                      {% endif %}
-            
-                      {% for page_num in page_obj.paginator.page_range %}
-                      {% if page_obj.number == page_num %}
-                       <li><a class="flex w-9 h-9 items-center justify-center  bg-yellow-500 text-black font-bold" href="">{{ page_num }}</a></li>
-                       {% else %}
-                       <li><a class="flex w-9 h-9 items-center justify-center bg-black  text-white hover:text-gray-200 font-bold" href="?page={{ page_num }}">{{ page_num }}</a></li>
-                       {% endif %}
-                       {% endfor %}
-                      {% if page_obj.has_next %}
-                      <li>
-                        <a class="flex w-9 h-9 items-center justify-center bg-black text-white hover:text-gray-200" href="?page={{ page_obj.next_page_number }}" aria-label="next">
-                          <svg width="7" height="12" viewBox="0 0 7 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M1 1.33341L5.66667 6.00008L1 10.6667" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                          </svg>
-                        </a>
-                      </li>
-                      {% endif %}
-                    </ul>
+                      <ul class="flex items-center justify-center">
+                          {% if page_obj.has_previous %}
+                              <li>
+                                  <a class="flex w-9 h-9 items-center justify-center bg-black text-white hover:text-gray-200"
+                                      href="?page={{ page_obj.previous_page_number }}{% if pagination_query_string %}&{{ pagination_query_string }}{% endif %}"
+                                      aria-label="previous">
+                                      <svg width="7" height="12" viewBox="0 0 7 12" fill="none"
+                                          xmlns="http://www.w3.org/2000/svg">
+                                          <path d="M6 10.6666L1.33333 5.99992L6 1.33325" stroke="currentColor"
+                                              stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                                      </svg>
+                                  </a>
+                              </li>
+                          {% endif %}
+          
+                          {% for page_num in page_obj.paginator.page_range %}
+                              {% if page_obj.number == page_num %}
+                                  <li><a class="flex w-9 h-9 items-center justify-center  bg-yellow-500 text-black font-bold"
+                                          href="">{{ page_num }}</a></li>
+                              {% elif page_num > page_obj.number|add:-5 and page_num < page_obj.number|add:5 %}
+                                  <li><a class="flex w-9 h-9 items-center justify-center bg-black text-white hover:text-gray-200 font-bold"
+                                          href="?page={{ page_num }}{% if pagination_query_string %}&{{ pagination_query_string }}{% endif %}">{{ page_num }}</a>
+                                  </li>
+                              {% endif %}
+                          {% endfor %}
+                          {% if page_obj.has_next %}
+                              <li>
+                                  <a class="flex w-9 h-9 items-center justify-center bg-black text-white hover:text-gray-200"
+                                      href="?page={{ page_obj.next_page_number }}{% if pagination_query_string %}&{{ pagination_query_string }}{% endif %}"
+                                      aria-label="next">
+                                      <svg width="7" height="12" viewBox="0 0 7 12" fill="none"
+                                          xmlns="http://www.w3.org/2000/svg">
+                                          <path d="M1 1.33341L5.66667 6.00008L1 10.6667" stroke="currentColor"
+                                              stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                                      </svg>
+                                  </a>
+                              </li>
+                          {% endif %}
+                      </ul>
                   </nav>
-                </div>
-            </section>
+              </div>
+          </section>
+          
+          
 
         </div>
       </div>

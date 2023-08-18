@@ -5,17 +5,24 @@ from delivery.models import *
 from orders.models import *
 from django.http import Http404
 
-def product_list(request):
-    collections = Collection.objects.all()
-    products= Product.objects.all()
-    return render(request, 'product_list.html', {'collections': collections, 'products': products})
+
+def products(request):
+
+    products = Product.objects.all()
+    context = {
+        'products' :products,
+    }
+    print(products)
+    return render(request,'products.html',context)
+
+
+
 
 
 def product_detail(request, product_slug):
-
     product = get_object_or_404(Product, slug=product_slug)
     session ,created= Session.objects.new_or_get(request)
-    states = Wilaya.objects.all()
+    states =  Wilaya.objects.all()
     fees = Fee.objects.all()
     if request.method == 'POST':
         form = OrderForm(request.POST)
@@ -27,12 +34,14 @@ def product_detail(request, product_slug):
             return redirect("order_success",order_id=order.id)
     else:
         form = OrderForm()
+        
     context ={
         'product':product,
         'states':states,
+        'fees':fees,
         'form':form,
-        'fees':fees
     }
+   
   
     return render(request, 'product_detail.html', context)
 

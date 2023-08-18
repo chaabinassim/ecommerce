@@ -3,18 +3,26 @@
     <div class="container mx-auto px-4">
       <div class="max-w-4xl mx-auto text-center">
         <div class="pb-9 border-b border-blueGray-800">
+          {% if footer_section.image %}
           <a class="inline-block mb-20" href="#">
-            <img class="block h-9" src="{% static 'assets/logos/vendia.svg' %}" alt="">
+            <img class="block h-9" src="{{footer.section.image.url}}" alt="">
           </a>
+          {% else %}
+             {% if footer_section.title %}
+              <p class="text-white text-lg font-bold mb-20">{{ footer_section.title }}</p>
+             {% else %}
+              <p class="text-white text-lg font-bold mb-20"> brand name</p>
+             {% endif %}
+          {% endif %}
           <div class="flex flex-wrap -mx-4 -mb-4 justify-center items-center">
-            <div class="w-full xs:w-1/2 md:w-auto px-4 xl:px-8 mb-4"><a class="inline-block font-medium text-white hover:text-yellow-500" href="#">Company</a></div>
-            <div class="w-full xs:w-1/2 md:w-auto px-4 xl:px-8 mb-4"><a class="inline-block font-medium text-white hover:text-yellow-500" href="#">Resource</a></div>
-            <div class="w-full xs:w-1/2 md:w-auto px-4 xl:px-8 mb-4"><a class="inline-block font-medium text-white hover:text-yellow-500" href="#">Tracking</a></div>
-            <div class="w-full xs:w-1/2 md:w-auto px-4 xl:px-8 mb-4"><a class="inline-block font-medium text-white hover:text-yellow-500" href="#">Help</a></div>
-            <div class="w-full xs:w-1/2 md:w-auto px-4 xl:px-8 mb-4"><a class="inline-block font-medium text-white hover:text-yellow-500" href="#">Privacy Policy</a></div>
+            <div class="w-full xs:w-1/2 md:w-auto px-4 xl:px-8 mb-4"><a class="inline-block font-medium text-white hover:text-yellow-500" href="#">FAQ</a></div>
+            <div class="w-full xs:w-1/2 md:w-auto px-4 xl:px-8 mb-4"><a class="inline-block font-medium text-white hover:text-yellow-500" href="#">LIVRAION</a></div>
+            <div class="w-full xs:w-1/2 md:w-auto px-4 xl:px-8 mb-4"><a class="inline-block font-medium text-white hover:text-yellow-500" href="#">PROCEDURE D’ECHANGE</a></div>
+            <div class="w-full xs:w-1/2 md:w-auto px-4 xl:px-8 mb-4"><a class="inline-block font-medium text-white hover:text-yellow-500" href="#">POLITIQUE DE CONFIDENTIALITÉ</a></div>
+
           </div>
         </div>
-        <p class="mt-8 text-gray-400">Copyright © 2022 Landingfolio. All Rights Reserved</p>
+        <p class="mt-8 text-gray-400">{% if footer_section.subtitle %} {{footer_section.subtitle}} {% else %} Copyright © 2022 Brand Name. All Rights Reserved {% endif %}</p>
       </div>
     </div>
   </section>

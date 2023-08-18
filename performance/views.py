@@ -1,7 +1,9 @@
 from django.shortcuts import render
 from orders.models import Order
 from .filters import OrderFilter
+from django.contrib.auth.decorators import permission_required
 
+@permission_required('orders.change_order')
 def stats_view(request):
     order_filter = OrderFilter(request.GET, queryset=Order.objects.all())
     filtered_orders = order_filter.qs

@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    'django.contrib.humanize',  
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -50,6 +51,7 @@ INSTALLED_APPS = [
     'orders',
     'staff',
     'performance',
+    'customization',
   
 ]
 
@@ -87,7 +89,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 # custom
-                'ecommerce.custom_context_processors.get_orders_context',
+                'ecommerce.custom_context_processors.get_custom_context',
             ],
         },
     },
@@ -105,6 +107,9 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+
+
 
 
 # Password validation

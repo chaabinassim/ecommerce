@@ -1,5 +1,11 @@
 {% extends 'base/base.html' %}
 {% load static %}
+
+{% block title %}
+<title>cart</title>
+{% endblock title %}
+
+
 {% block content %}
 
 <section class="py-12 md:py-24 lg:py-32 bg-black">
@@ -26,7 +32,11 @@
             <div class="flex flex-wrap -mx-4">
               <div class="w-full lg:w-3/4 xl:w-10/12 px-4 mb-6 lg:mb-0">
                 <div class="sm:flex">
-                  <img class="block h-60 w-60 object-cover" src="{% static 'assets/images/order/order-details-product2.png' %}" alt="">
+                  {% if product.image %}
+                  <img class="block h-60 w-60 object-cover" src="{{order.product.image.url}}" alt="">
+                  {% else %}
+                  <img class="block h-60 w-60 object-cover" src="https://placehold.co/600x600" alt="">
+                  {% endif %}
                   <div class="mt-8 sm:pl-10">
                     <a href="{{order.product.get_absolute_url}}"><h6 class="font-bold text-white mb-1">{{order.product.name}}</h6></a>
                     <div class="flex items-center">
@@ -39,8 +49,8 @@
               </div>
               <div class="w-full lg:w-1/4 xl:w-2/12 px-4 text-right">
                 <div class="flex flex-col h-full">
-                  <span class="block pb-8 mb-auto font-bold text-white">{{order.total_price}}</span>
-                  <a class="inline-block mb-3 px-8 py-3 text-center text-sm font-bold text-black bg-yellow-500 hover:bg-yellow-600 transition duration-200" href="#">Buy again</a><a class="inline-block px-8 py-3 text-center font-bold text-gray-400 hover:text-gray-200 border border-gray-400 hover:border-gray-200 transition duration-200" href="#">Shop similar</a>
+                  <span class="block pb-8 mb-auto font-bold text-white">{{order.total_price|floatformat:"0"}} DA</span>
+                  <a class="inline-block mb-3 px-8 py-3 text-center text-sm font-bold text-black bg-yellow-500 hover:bg-yellow-600 transition duration-200" href="{% url 'download_bill' order_id=order.id %}">Download bill</a><a class="inline-block px-8 py-3 text-center font-bold text-gray-400 hover:text-gray-200 border border-gray-400 hover:border-gray-200 transition duration-200" href="#">Shop similar</a>
                 </div>
               </div>
             </div>

@@ -1,7 +1,7 @@
 {% extends "base/base.html" %}
 {% load static %}
 {% block title %}
-<title>product</title>
+<title>{{product.name}}</title>
 {% endblock title  %}
 
 {% block content %}
@@ -11,52 +11,62 @@
       <div class="max-w-md md:max-w-none mx-auto">
         <ul class="flex items-center">
           <li class="mr-3">
-            <a class="text-gray-400 font-medium" href="#">Home</a>
+            <a class="text-gray-400 font-medium" href="{% url 'home' %}">Home</a>
             <span class="pl-2 text-gray-400">/</span>
           </li>
           <li class="mr-3">
-            <a class="text-gray-400 font-medium" href="#">Fashion</a>
+            <a class="text-gray-400 font-medium" href="{% url 'collections' %}">collections</a>
             <span class="pl-2 text-gray-400">/</span>
           </li>
-          <li><a class="text-yellow-500 font-medium" href="#">{{product.name}}</a></li>
+          <li class="mr-3">
+            <a class="text-gray-400 font-medium" href="{{product.collection.get_absolute_url}}">{{product.collection.name}}</a>
+            <span class="pl-2 text-gray-400">/</span>
+          </li>
+          <li><a class="text-yellow-500 font-medium" href="{{product.get_absolute_url}}">{{product.name}}</a></li>
         </ul>
         <div class="flex flex-wrap mt-10 -mx-4">
-          <div class="w-full md:w-1/2 lg:w-3/5  mb-12 md:mb-0 px-4">
-            <div class="max-w-3xl">
-              <div class="lg:flex h-full">
-                <div class="lg:flex-shrink-0 lg:w-20 lg:mr-6">
-                  <div class="flex lg:-mb-4 lg:block justify-between">
-                    <a class="block mb-4" href="#">
-                      <img class="block sm:w-20 h-20" src="{% static 'assets/images/product-details/clothes1.png' %}" alt="">
-                    </a>
-                    <a class="block mb-4" href="#">
-                      <img class="block sm:w-20 h-20" src="{% static 'assets/images/product-details/clothes2.png' %}" alt="">
-                    </a>
-                    <a class="block mb-4" href="#">
-                      <img class="block sm:w-20 h-20" src="{% static 'assets/images/product-details/clothes3.png' %}" alt="">
-                    </a>
-                    <a class="block mb-4" href="#">
-                      <img class="block sm:w-20 h-20" src="{% static 'assets/images/product-details/clothes4.png' %}" alt="">
-                    </a>
-                  </div>
+          <div class="w-full md:w-1/2   mb-12 md:mb-0 px-4">
+            <div style="--swiper-navigation-color: #fff; --swiper-pagination-color: #fff" class="swiper mySwiper2 mb-6">
+              <div class="swiper-wrapper">
+                <div class="swiper-slide">
+                  <img src="{% if product.image %} {{product.image.url}} {% else %} https://placehold.co/600x600 {% endif %}" />
                 </div>
-                <div>
-                  <img class="block h-full w-full max-w-4xl" src="{% static 'assets/images/product-details/clothes-big-1.png' %}" alt="">
+                {% for obj in product.thumbnails.all %}
+                <div class="swiper-slide">
+                  <img src="{% if obj.thumbnail %} {{obj.thumbnail.url}} {% else %} https://placehold.co/600x600 {% endif %}" />
                 </div>
+                {% endfor %}
+              </div>
+              <div class="swiper-button-next"></div>
+              <div class="swiper-button-prev"></div>
+            </div>
+            <div thumbsSlider="" class="swiper mySwiper">
+              <div class="swiper-wrapper">
+                <div class="swiper-slide">
+                  <img src="{% if product.image %} {{product.image.url}} {% else %} https://placehold.co/600x600 {% endif %}" />
+                </div>
+                {% for obj in product.thumbnails.all %}
+                <div class="swiper-slide">
+                  <img src="{% if obj.thumbnail %} {{obj.thumbnail.url}} {% else %} https://placehold.co/600x600 {% endif %}" />
+                </div>
+                {% endfor %}
               </div>
             </div>
           </div>
-          <div class="w-full md:w-1/2 lg:w-2/5  px-4">
+          <div class="w-full md:w-1/2  px-4">
             <div class="p-8 h-full border border-blueGray-800">
               <div class="pb-8 border-b border-blueGray-800">
-                <span class="inline-block px-2 text-sm mb-5 bg-yellow-500 font-medium rounded-full">Hot</span>
+                <span class="inline-block px-2 text-sm mb-5 bg-yellow-500 font-medium rounded-full">{{product.tag.name}}</span>
                 <h4 class="font-heading font-bold text-2xl text-white mb-3">{{product.name}}</h4>
-                <!--<p class="text-gray-400 mb-6">Lorem ipsum dolor sit amet, consectetur adipiscing a elit. Nullam to the dictum aliquet accum.</p>-->
-                <span class="block mb-1 text-gray-500 font-medium line-through">4500 DZD</span>
+                {% if product.discount %}
+                <span class="block mb-1 text-gray-500 font-medium line-through">{{product.price|floatformat:"0"}} DZD</span>
                 <div class="inline-flex items-end">
-                  <h4 class="text-2xl font-bold text-white mr-4">{{product.price}} DZD</h4>
-                  <span class="text-yellow-500">%25 OFF</span>
+                  <h4 class="text-2xl font-bold text-white mr-4">{{product.discounted_price|floatformat:"0"}} DZD</h4>
+                  <span class="text-yellow-500">%{{product.discount|floatformat:"0"}} OFF</span>
                 </div>
+                {% else %}
+                <h4 class="text-2xl font-bold text-white mr-4">{{product.price|floatformat:"0"}} DZD</h4>
+                {% endif %}
               </div>
               <div class="pt-8 pb-8 ">
                 <div class="w-full">
@@ -106,31 +116,39 @@
                       {{ form.phone_number }}
                     </div>
             
-                    <div class="mb-6">
+                    <div class="mb-6 flex items-center">
                       {{ form.quantity.errors }}
                       <div class="flex items-center">
-                        <button class="rounded-full w-8 h-8 bg-gray-300 text-lg text-gray-600 focus:outline-none" type="button" id="minus-btn">-</button>
-                        {{ form.quantity }}
-                        <button class="rounded-full w-8 h-8 bg-gray-300 text-lg text-gray-600 focus:outline-none" type="button" id="plus-btn">+</button>
+                          <button class="rounded-full w-8 h-8 bg-gray-300 text-lg text-gray-600 focus:outline-none" type="button" id="minus-btn">-</button>
+                          {{ form.quantity }}
+                          <button class="rounded-full w-8 h-8 bg-gray-300 text-lg text-gray-600 focus:outline-none" type="button" id="plus-btn">+</button>
                       </div>
-                   </div>
+                      <label class="ml-auto text-white">:الكمية</label>
+                  </div>
+                  
                    <!-- recap-->
                    <div class="p-8">
                     <div class="flex mb-5 items-center justify-between">
-                      <span class="text-sm font-medium text-gray-400">Subtotal</span>
-                      <span class="text-sm font-medium text-white"></span>
+                      <span class="text-sm font-bold text-white"></span>
+                      <span class="text-sm font-bold text-white"> : ملخص الطلب </span>
                     </div>
                     <div class="flex mb-5 items-center justify-between">
-                      <span class="text-sm font-medium text-gray-400">Shipping</span>
-                      <span class="text-sm font-medium text-white" id="state_fee"></span>
+                      <span class="text-sm font-bold text-white" id="state_fee"></span>
+                      <span class="text-sm font-bold text-white"> التوصيل </span>
                     </div>
+
+                    <div class="flex mb-8 items-center justify-between">
+                      <span class="text-sm font-bold text-white" id="product-total"></span>
+                      <span class="text-sm font-bold text-white">المنتوج</span>
+                    </div>
+
                     
                     <div class="flex mb-8 items-center justify-between">
-                      <span class="text-sm font-bold text-white">Total To pay</span>
-                      <span class="text-sm font-bold text-white" id="order-total"></span>
+                      <span class="text-md font-bold text-white" id="order-total"></span>
+                      <span class="text-md font-bold text-white" >الدفع الكلي</span>
                     </div>
                   </div>
-                   <button type="submit" class="w-full inline-block px-12 py-4 text-center text-black font-bold bg-yellow-500 hover:bg-yellow-600 transition duration-200"> order</button>
+                   <button type="submit" {% if not product.in_stock  %}disabled{% endif %} class="w-full inline-block px-12 py-4 text-center text-black font-bold bg-yellow-500 hover:bg-yellow-600 transition duration-200"> أطلب الأن</button>
                   </form>
                 </div>
               </div>
@@ -140,17 +158,44 @@
       </div>
     </div>
   </section>
-
+ 
 
 
 {% endblock content %}
 
 {% block scripts  %}
-<script>
+<!-- Swiper JS -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
 
-  const stateFeeData = {
+<!-- Initialize Swiper -->
+<script>
+  var swiper = new Swiper(".mySwiper", {
+    loop: true,
+    spaceBetween: 10,
+    slidesPerView: 4,
+    freeMode: true,
+    watchSlidesProgress: true,
+  });
+  var swiper2 = new Swiper(".mySwiper2", {
+    loop: true,
+    spaceBetween: 10,
+    navigation: {
+      nextEl: ".swiper-button-next",
+      prevEl: ".swiper-button-prev",
+    },
+    thumbs: {
+      swiper: swiper,
+    },
+  });
+</script>
+
+
+
+<script>
+  $(document).ready(function() {
+    const stateFeeData = {
         {% for fee in fees %}
-        "{{ fee.wilaya.id }}":{{ fee.home_fee }} ,
+        "{{ fee.wilaya.id }}": {{ fee.home_fee }},
         {% endfor %}
     };
 
@@ -164,69 +209,94 @@
         {% endfor %}
     };
 
-    const stateSelect = document.querySelector('#id_state');
-    const citySelect = document.querySelector('#id_city');
-    const stateFee = document.querySelector('#state_fee');
+    const stateSelect = $('#id_state');
+    const citySelect = $('#id_city');
+    const stateFee = $('#state_fee');
+    const quantityField = $("#id_quantity");
+    const plusButton = $("#plus-btn");
+    const minusButton = $("#minus-btn");
+    const orderTotalDisplay = $("#order-total");
+    const productTotalDisplay = $("#product-total");
 
-    stateSelect.addEventListener('change', () => {
-        const selectedState = stateSelect.value;
+    stateSelect.on('change', function() {
+        const selectedState = $(this).val();
         if (selectedState) {
             populateCityOptions(selectedState);
-            updateStateFee(selectedState)
+            updateStateFee(selectedState);
             updateOrderTotal();
+            updateProductTotal();
         } else {
             clearCityOptions();
         }
     });
 
-    $("#plus-btn").click(function() {
-      var quantityField = $("#id_quantity");
-      var currentValue = parseInt(quantityField.val());
-      quantityField.val(currentValue + 1);
-      updateOrderTotal();
-    });
-
-    // Function to decrease the quantity, minimum value is 1
-    $("#minus-btn").click(function() {
-      var quantityField = $("#id_quantity");
-      var currentValue = parseInt(quantityField.val());
-      if (currentValue > 1) {
-        quantityField.val(currentValue - 1);
+    plusButton.click(function() {
+        quantityField.val(parseInt(quantityField.val()) + 1);
         updateOrderTotal();
-      }
+        updateProductTotal();
     });
 
-    
+    minusButton.click(function() {
+        const currentValue = parseInt(quantityField.val());
+        if (currentValue > 1) {
+            quantityField.val(currentValue - 1);
+            updateOrderTotal();
+            updateProductTotal();
+        }
+    });
 
     function updateOrderTotal() {
-      var quantity = parseInt($("#id_quantity").val());
-      var productPrice = {{product.price}};
-      var shippingCost = parseFloat($("#state_fee").text());
+        const quantity = parseInt(quantityField.val());
+        const productPrice = {% if product.discount %} {{ product.discounted_price }} {% else %} {{ product.price }} {% endif %};
+        const shippingCost = parseFloat(stateFee.text()) || 0;
 
-      var orderTotal = (quantity * productPrice) + shippingCost;
+        const orderTotal = (quantity * productPrice) + shippingCost;
 
-      $("#order-total").text(orderTotal.toFixed(2));
+        // Format orderTotal with spaces between thousands
+        const formattedOrderTotal = orderTotal.toLocaleString('en-US', { useGrouping: true }).replace(/,/g, ' ');
+
+        orderTotalDisplay.text(formattedOrderTotal + ' DZD');
+    }
+
+    function updateProductTotal() {
+        const quantity = parseInt(quantityField.val());
+        const productPrice = {% if product.discount %} {{ product.discounted_price }} {% else %} {{ product.price }} {% endif %};
+
+        const productTotal = quantity * productPrice;
+
+        // Format productTotal with spaces between thousands
+        const formattedProductTotal = productTotal.toLocaleString('en-US', { useGrouping: true }).replace(/,/g, ' ');
+
+        productTotalDisplay.text(formattedProductTotal + ' DZD');
+      
+      }
+
+      function updateStateFee(stateId) {
+        const statePrice = stateFeeData[stateId] || 0;
+
+        // Format state price with spaces between thousands
+        const formattedStatePrice = statePrice.toLocaleString('en-US', { useGrouping: true }).replace(/,/g, ' ');
+
+        stateFee.text(formattedStatePrice + ' DZD');
     }
 
     function populateCityOptions(stateId) {
         const cities = stateCityData[stateId];
-        citySelect.innerHTML = '<option value="" selected="">البلدية</option>';
+        citySelect.html(`<option value="" selected="">البلدية</option>`);
         cities.forEach(city => {
-            const option = document.createElement('option');
-            option.value = city.id;
-            option.text = city.name;
-            citySelect.appendChild(option);
+            const option = $('<option>').val(city.id).text(city.name);
+            citySelect.append(option);
         });
     }
 
     function clearCityOptions() {
-        citySelect.innerHTML = '<option value="">Select a state first</option>';
+        citySelect.html(`<option value="">Select a state first</option>`);
     }
 
-    function updateStateFee(stateId) {
-      stateFee.innerHTML = stateFeeData[stateId];
-    }
-
+    // Clear city options on page load
+    clearCityOptions();
+});
 
 </script>
+
 {% endblock %}

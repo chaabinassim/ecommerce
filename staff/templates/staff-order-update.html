@@ -79,7 +79,7 @@
                 </div>
                 <div class="mb-6">
                   <p class="block mb-2 text-gray-400 text-sm font-medium" >Phone number</p>
-                  <p class="text-white">{{order.phone_number}}</p>
+                  <a href="tel:{{ order.phone_number }}" class="text-white">{{ order.phone_number }}</a>
                 </div>
                 <div class="mb-6">
                   <p class="block mb-2 text-gray-400 text-sm font-medium">Address</p>
@@ -145,51 +145,65 @@
 {% block scripts  %}
 
 <script>
+  document.addEventListener('DOMContentLoaded', function () {
     const stateCenterData = {
-        {% for state in states %}
-        "{{ state.id }}": [
-            {% for center in state.center_set.all %}
-            { "id": "{{ center.id }}", "name": "{{ center.display_name }}" },
-            {% endfor %}
-        ],
+      {% for state in states %}
+      "{{ state.id }}": [
+        {% for center in state.center_set.all %}
+        { "id": "{{ center.id }}", "name": "{{ center.display_name }}" },
         {% endfor %}
+      ],
+      {% endfor %}
     };
 
     const stateSelect = document.querySelector('#id_state');
     const centerSelect = document.querySelector('#id_center');
-
-    stateSelect.addEventListener('change', () => {
-        const selectedState = stateSelect.value;
-        if (selectedState) {
-            populateCenterOptions(selectedState);
-        } else {
-            clearCenterOptions();
-        }
-    });
-
-
-    $(document).ready(function() {
-      const selectedState = stateSelect.value;
-      if (selectedState) {
-          populateCenterOptions(selectedState);
-      } else {
-          clearCenterOptions();
-      }
-    });
+    const stopDeskSelect = document.querySelector('#id_is_stopdesk');
 
     function populateCenterOptions(stateId) {
-        const centers = stateCenterData[stateId];
-        centerSelect.innerHTML = '<option value="" selected="">Center</option>';
-        centers.forEach(center => {
-            const option = document.createElement('option');
-            option.value = center.id;
-            option.text = center.name;
-            centerSelect.appendChild(option);
-        });
+      const centers = stateCenterData[stateId];
+      centerSelect.innerHTML = '<option value="" selected disabled>Select a center</option>';
+      centers.forEach(center => {
+        const option = new Option(center.name, center.id);
+        centerSelect.appendChild(option);
+      });
     }
 
     function clearCenterOptions() {
-        centerSelect.innerHTML = '<option value="">Select a center first</option>';
+      centerSelect.innerHTML = '<option value="" selected disabled>Select a state first</option>';
     }
+
+    stateSelect.addEventListener('change', function () {
+      const selectedState = stateSelect.value;
+      if (selectedState) {
+        populateCenterOptions(selectedState);
+      } else {
+        clearCenterOptions();
+      }
+    });
+
+    stopDeskSelect.addEventListener('change', function () {
+      const selectedValue = stopDeskSelect.value;
+      if (selectedValue === 'true') {
+        stateSelect.style.display = 'block';
+        centerSelect.style.display = 'block';
+        // Populate center options immediately if state is already selected
+        populateCenterOptions(stateSelect.value);
+      } else {
+        stateSelect.style.display = 'none';
+        centerSelect.style.display = 'none';
+        clearCenterOptions();
+      }
+    });
+
+    // Hide state and center inputs by default
+    stateSelect.style.display = 'none';
+    centerSelect.style.display = 'none';
+    
+    // Trigger the change event on initial page load for stop desk
+    stopDeskSelect.dispatchEvent(new Event('change'));
+  });
 </script>
+
+
 {% endblock scripts  %}

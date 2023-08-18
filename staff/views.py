@@ -31,10 +31,17 @@ def staff_view(request):
     paginator = Paginator(filtered_orders, 5)  # Display 30 orders per page
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
+
+    # Preserve filter parameters in pagination links
+    query_dict = request.GET.copy()
+    if 'page' in query_dict:
+        del query_dict['page']
+    pagination_query_string = query_dict.urlencode()
     
     context = {
         'order_filter': order_filter,
-        'page_obj': page_obj
+        'page_obj': page_obj,
+        'pagination_query_string': pagination_query_string  # Pass this to the template
     }
     return render(request,'staff.html',context)
 

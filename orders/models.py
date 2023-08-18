@@ -12,7 +12,8 @@ from django.conf import settings
 from products .models import Product
 from django.contrib.auth.models import User
 from django.http import Http404
-
+from requests.exceptions import HTTPError, ReadTimeout, ConnectionError, RequestException
+from decimal import Decimal
 
 def unique_slug_pre_save_receiver(sender, instance, *args, **kwargs):
     if not instance.slug:
@@ -20,8 +21,7 @@ def unique_slug_pre_save_receiver(sender, instance, *args, **kwargs):
 
 
 def order_total_receiver(sender, instance, *args, **kwargs):
-    if not instance.total_price:
-        instance.total_price =  instance.product.price * instance.quantity
+    instance.total_price =  instance.order_total
 
 
 def order_status_pre_save_receiver(sender, instance, *args, **kwargs):
@@ -59,120 +59,83 @@ def is_stopdesk_pre_save_receiver(sender, instance, *args, **kwargs):
 
 def create_parcel_receiver(sender, instance, *args, **kwargs):
     try:
-        if not instance.tracking_id and instance.status.name=="Confirmed" :
-            api_setting = Setting.objects.get(id=1) # use  et over filter because filter does not return doe not exist
-            url = api_setting.parcel_url
-            api_id      = api_setting.api_id
-            api_token   = api_setting.api_token
-            yalidine_orders = {
-                instance.pk:OrderSerializer(instance).data
-            }
-            #transform pythion dictionary to json object
-            yalidine_orders_json = json.dumps(yalidine_orders,cls=DjangoJSONEncoder)
-        
-            #get the parcel if   it exist on yalidine
-            get_response  = requests.get(f"{url}?order_id=order{instance.pk}",headers = {'X-API-ID': api_id,'X-API-TOKEN':api_token})
-            #raise http errors if thers is any
-            get_response.raise_for_status()
-            #transform json resmonse to python dictionary
-            get_response_py_dic =json.loads(get_response.content)
-            if get_response_py_dic['total_data']==1:
-                instance.tracking_id = get_response_py_dic['data'][0]['tracking']
-                instance.error = "One occurrence"
-                instance.error_message = "One parcel  of this order was found on yalidine maybe you confirmed this order earlier and deleted it's tracking id"
-                print("one occurance")
-            elif get_response_py_dic['total_data']>1:
-                instance.tracking_id = get_response_py_dic['data'][0]['tracking']
-                print(get_response_py_dic['data'][0]['tracking'])
-                print("duplicate")
-                instance.error = "Duplicated"
-                instance.error_message = "Multiple parcels was  of this order was found on yalidine go to yalidine and delete duplicate"
-            
-            elif get_response_py_dic['total_data']==0:
-                # parcel does not excist create one 
-                post_response = requests.post(url, data = yalidine_orders_json  ,headers = {'X-API-ID': api_id,'X-API-TOKEN':api_token})
-                #raise http errors if thers is any
-                post_response.raise_for_status()
-                post_response_py_dic = json.loads(post_response.content)
-                if post_response_py_dic[f"order{instance.pk}"]['success']:
-                    instance.tracking_id = post_response_py_dic[f"order{instance.pk}"]['tracking']
-                    instance.error = "No Error"
-                    instance.error_message = "Parcel was created successfully on yalidine"
-                else :
-                    instance.error = "Failed"
-                    instance.error_message = "Parcel creation on yalidine failed"
+        if instance.status.name != "Confirmed":
+            return  # Do nothing if status is not confirmed
 
-        elif instance.tracking_id and instance.status.name=="Confirmed" :
-            api_setting = Setting.objects.get(id=1) # use  et over filter because filter does not return doe not exist
-            url = api_setting.parcel_url
-            api_id      = api_setting.api_id
-            api_token   = api_setting.api_token
-            yalidine_order = OrderSerializer(instance).data
-            yalidine_orders = {
-                instance.pk:OrderSerializer(instance).data
-            }
-            #transform pythion dictionary to json object
-            yalidine_order_json = json.dumps(yalidine_order,cls=DjangoJSONEncoder)
-            yalidine_orders_json = json.dumps(yalidine_orders,cls=DjangoJSONEncoder)
-            #get the parcel if   it exist on yalidine
-            get_response  = requests.get(f"{url}{instance.tracking_id}",headers = {'X-API-ID': api_id,'X-API-TOKEN':api_token})
-            #raise http errors if thers is any
+        api_setting = Setting.objects.first()
+        url = api_setting.parcel_url
+        api_id = api_setting.api_id
+        api_token = api_setting.api_token
+
+        headers = {'X-API-ID': api_id, 'X-API-TOKEN': api_token}
+
+        order_data = OrderSerializer(instance).data
+        yalidine_order = json.dumps(order_data, cls=DjangoJSONEncoder)
+        yalidine_orders = {instance.pk: order_data}
+        yalidine_orders_json = json.dumps(yalidine_orders, cls=DjangoJSONEncoder)
+
+        if instance.tracking_id:
+            get_response = requests.get(f"{url}{instance.tracking_id}", headers=headers)
             get_response.raise_for_status()
-            #transform json resmonse to python dictionary
-            get_response_py_dic =json.loads(get_response.content)
-            if get_response_py_dic['total_data']==1:
-                print("one occurance update") # the parcel was found we can update 
-                patch_response = requests.patch(f"{url}{instance.tracking_id}", data = yalidine_order_json  ,headers = {'X-API-ID': api_id,'X-API-TOKEN':api_token})
-                #raise http errors if thers is any
+            get_response_data = json.loads(get_response.content)
+
+            if get_response_data['total_data'] == 1:
+                print("one occurrence update")
+                patch_response = requests.patch(f"{url}{instance.tracking_id}", data=yalidine_order, headers=headers)
                 patch_response.raise_for_status()
                 instance.error = "No Error"
                 instance.error_message = "Parcel was updated successfully on yalidine"
-            
 
-            elif get_response_py_dic['total_data']==0:
-                # parcel does not excist (maybe was deleted on yalidine) create one 
-                post_response = requests.post(url, data = yalidine_orders_json  ,headers = {'X-API-ID': api_id,'X-API-TOKEN':api_token})
-                #raise http errors if thers is any
+            elif get_response_data['total_data'] == 0:
+                post_response = requests.post(url, data=yalidine_orders_json, headers=headers)
                 post_response.raise_for_status()
-                post_response_py_dic = json.loads(post_response.content)
-                if post_response_py_dic[f"order{instance.pk}"]['success']:
-                    instance.tracking_id = post_response_py_dic[f"order{instance.pk}"]['tracking']
+                post_response_data = json.loads(post_response.content)
+                if post_response_data[f"order{instance.pk}"]['success']:
+                    instance.tracking_id = post_response_data[f"order{instance.pk}"]['tracking']
                     instance.error = "No Error"
-                    instance.error_message = "Parcel wascreated on yalidine and tracking id was update in here"
-                else :
+                    instance.error_message = "Parcel was created on yalidine and tracking id was updated here"
+                else:
                     instance.error = "Failed"
                     instance.error_message = "Parcel creation on yalidine failed"
 
+        else:
+            get_response = requests.get(f"{url}?order_id=order{instance.pk}", headers=headers)
+            get_response.raise_for_status()
+            get_response_data = json.loads(get_response.content)
 
+            if get_response_data['total_data'] == 1:
+                instance.tracking_id = get_response_data['data'][0]['tracking']
+                instance.error = "One occurrence"
+                instance.error_message = "One parcel of this order was found on yalidine, maybe you confirmed this order earlier and deleted its tracking id"
+                print("one occurrence")
+            elif get_response_data['total_data'] > 1:
+                instance.tracking_id = get_response_data['data'][0]['tracking']
+                instance.error = "Duplicated"
+                instance.error_message = "Multiple parcels of this order were found on yalidine. Go to yalidine and delete duplicates"
+                print("duplicate")
+            elif get_response_data['total_data'] == 0:
+                post_response = requests.post(url, data=yalidine_orders_json, headers=headers)
+                post_response.raise_for_status()
+                post_response_data = json.loads(post_response.content)
+                if post_response_data[f"order{instance.pk}"]['success']:
+                    instance.tracking_id = post_response_data[f"order{instance.pk}"]['tracking']
+                    instance.error = "No Error"
+                    instance.error_message = "Parcel was created successfully on yalidine"
+                else:
+                    instance.error = "Failed"
+                    instance.error_message = "Parcel creation on yalidine failed"
 
-
-
-    except requests.exceptions.HTTPError as errh:
-        print("HTTP Error")
-        print(errh.args[0])
-        instance.error = "HTTP Error"
-        instance.error_message=f"HTTP Error-{errh.args[0]}"                
-    except requests.exceptions.ReadTimeout as errrt:
-        print("Time out")
-        instance.error = "Time out"
-        instance.error_message=f"Time out-{errrt}"   
-    except requests.exceptions.ConnectionError as conerr:
-        print("Connection error")
-        instance.error = "Connection error"
-        instance.error_message=f"Connection error-{conerr}"   
-    except requests.exceptions.RequestException as errex:
-        print("Exception request")
-        instance.error = "Exception request"
-        instance.error_message=f"Exception request-{errex}"   
-    except KeyError :
+    except (HTTPError, ReadTimeout, ConnectionError, RequestException) as err:
+        print("Error:", err)
+        instance.error = type(err).__name__
+        instance.error_message = f"{type(err).__name__}-{err}"
+    except KeyError:
         instance.error = "KeyError"
-        instance.error_message="cant find order with this id  on yalidine"  
-    
+        instance.error_message = "Can't find order with this id on yalidine"
     except Setting.DoesNotExist:
         instance.error = "No delivery settings"
-        instance.error_message="Setup delevery settings first"   
-                    
-   
+        instance.error_message = "Set up delivery settings first"
+ 
             
        
 
@@ -333,6 +296,22 @@ class Order(models.Model):
     @property
     def has_exchange(self):
         return False
+    
+    @property
+    def order_total(self):
+        product_price = self.product.discounted_price
+        state = self.state
+        state_fee = None
+        
+        if Fee.objects.filter(wilaya=state).exists():
+            fee = Fee.objects.get(wilaya=state)
+            if self.is_stopdesk:
+                state_fee = fee.desk_fee
+            else:
+                state_fee = fee.home_fee
+        
+        total_amount = (product_price * Decimal(self.quantity)) + (state_fee if state_fee is not None else Decimal('0'))
+        return total_amount
     
 
     def __str__(self):

@@ -1,0 +1,27 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% block title %}
+<title>{{collection.name}}</title>
+{% endblock  %}
+
+{% block content %}
+<section class="py-12 md:py-24 bg-black">
+    <div class="container mx-auto px-4">
+      <div class="max-w-sm md:max-w-xl mx-auto lg:max-w-none">
+        <div class="mb-16">
+          <a href="{% url 'collections' %}"><span class="text-sm font-bold text-yellow-500">Collections</span></a>
+          <h1 class="font-heading text-4xl text-white font-bold mt-6 mb-2"> Collection {{collection.name}}</h1>
+        </div>
+        <div class="flex flex-wrap -mb-8">
+
+
+          {% for related_product in related_products %}
+          {% include 'snippets/product.html' with product=related_product %}
+          {% endfor %}
+        
+         
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock content %}

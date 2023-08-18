@@ -12,11 +12,11 @@
           <div class="flex flex-wrap -mx-4 pt-20 justify-center items-center relative">
             <div class="xl:w-1/2 px-4 mb-16 lg:mb-0">
               <div class="relative xl:-ml-40 max-w-md md:max-w-lg lg:max-w-xl mx-auto lg:py-12">
-                <h1 class="block font-heading text-6xl sm:text-8xl md:text-10xl font-bold text-white">VIBE OF</h1>
-                <h1 class="sm:pl-6 lg:pl-16 font-heading text-6xl sm:text-8xl md:text-10xl font-bold text-yellow-500 mb-6">SUMMER</h1>
+                <h1 class="block font-heading text-6xl sm:text-8xl md:text-10xl font-bold text-white">{% if hero_section.title %} {{hero_section.title}} {% else %} TITLE {% endif %}</h1>
+                <h1 class="sm:pl-6 lg:pl-16 font-heading text-6xl sm:text-8xl md:text-10xl font-bold text-yellow-500 mb-6">{% if hero_section.subtitle %} {{hero_section.subtitle}} {% else %} SUBTITLE {% endif %}</h1>
                 <div class="sm:ml-12 xl:ml-40">
-                  <p class="text-2xl font-light text-white mb-6">Lorem ipsum dolor sit amet, consectetur adipiscing a elit. Nullam to dictum aliquet accumsan porta lectus ridiculus in these mattis.</p>
-                  <a class="group inline-flex items-center text-xl text-white hover:text-yellow-500 font-bold" href="#">
+                  <p class="text-2xl font-light text-white mb-6">{% if hero_section.description %} {{hero_section.description}} {% else %} Lorem ipsum dolor sit amet consectetur adipisicing elit. Assumenda aliquam soluta autem, nobis hic ad optio est libero deserunt laboriosam? Iusto asperiores, at accusamus sed facilis eos perferendis necessitatibus quam. {% endif %}</p>
+                  <a class="group inline-flex items-center text-xl text-white hover:text-yellow-500 font-bold" href="{% url 'collections' %}">
                     <span class="mr-3">Explore Collections</span>
                     <span class="animate-bounce">
                       <svg width="11" height="12" viewbox="0 0 11 12" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -30,12 +30,14 @@
             <div class="xl:w-1/2 px-4 xl:order-first">
               <div class="block md:flex max-w-2xl lg:max-w-none mx-auto">
                 <div class="flex flex-col justify-center mb-6 md:mb-0 md:mr-8 xl:mr-20">
-                  <button class="inline-block mb-6 text-sm font-bold text-yellow-500">01</button>
-                  <button class="inline-block mb-6 text-sm font-bold text-gray-400 hover:text-gray-200">02</button>
-                  <button class="inline-block text-sm font-bold text-gray-400 hover:text-gray-200">03</button>
+                  
                 </div>
                 <div>
-                  <img class="block mx-auto" src="{% static 'assets/images/header/woman-side-header.png' %}" alt="">
+                  {% if hero_section.image %}
+                  <img class="block mx-auto" src="{{hero_section.image.url}}" alt="">
+                  {% else %}
+                  <img class="block mx-auto" src="https://placehold.co/600x400" alt="">
+                  {% endif %}
                 </div>
               </div>
             </div>
@@ -47,37 +49,25 @@
       <section class="py-12 md:pt-16 md:pb-20 bg-black">
         <div class="container mx-auto px-4">
           <div class="max-w-lg mx-auto lg:max-w-none">
-            <h1 class="font-heading text-4xl text-white font-bold mb-3">Shop by Collection</h1>
-            <p class="text-gray-400 mb-14">Lorem ipsum dolor sit amet, consectetur adipiscing elit</p>
+            <h1 class="font-heading text-4xl text-white font-bold mb-3">{% if collections_section.title %} {{collections_section.title}} {% else %} Collection title {% endif %}</h1>
+            <p class="text-gray-400 mb-14">{% if collections_section.subtitle %} {{collections_section.subtitle}} {% else %} Lorem ipsum dolor sit amet consectetur. {% endif %}</p>
             <div class="flex flex-wrap  items-center">
-              <div class="w-full lg:w-1/3 px-4 lg:px-8 mb-12 lg:mb-0">
-                <a class="group block" href="#">
-                  <img class="block mb-6 w-full object-cover" src="{% static 'assets/images/category/category-3-products1.png' %}" alt="">
-                  <div class="max-w-xs">
-                    <h6 class="font-bold text-white group-hover:text-yellow-500 mb-3">Women’s Fashion</h6>
-                    <p class="text-gray-500">Lorem ipsum dolor sit amet, consectetur elit. pur faucibus massa digniss.</p>
-                  </div>
-                </a>
-              </div>
-              <div class="w-full lg:w-1/3 px-4 lg:px-8 mb-12 lg:mb-0">
-                <a class="group block" href="#">
-                  <img class="block mb-6 w-full object-cover" src="{% static 'assets/images/category/category-3-products3.png' %}" alt="">
-                  <div class="max-w-xs">
-                    <h6 class="font-bold text-white group-hover:text-yellow-500 mb-3">Beauty Collection</h6>
-                    <p class="text-gray-500">Lorem ipsum dolor sit amet, consectetur elit. pur faucibus massa digniss.</p>
-                  </div>
-                </a>
-              </div>
-              <div class="w-full lg:w-1/3 px-4 lg:px-8">
-                <a class="group block" href="#">
-                  <img class="block mb-6 w-full object-cover" src="{% static 'assets/images/category/category-3-products2.png' %}" alt="">
-                  <div class="max-w-xs">
-                    <h6 class="font-bold text-white group-hover:text-yellow-500 mb-3">Men’s Collection</h6>
-                    <p class="text-gray-500">Lorem ipsum dolor sit amet, consectetur elit. pur faucibus massa digniss.</p>
-                  </div>
-                </a>
-              </div>
+              {% if featured_collections %}
+                {% for featured_collection in featured_collections %}
+                {% include 'snippets/collection.html' with collection=featured_collection %}
+                {% endfor %}
+              {% else %}
+                {% for x in max_collections %}
+                  {% include 'snippets/collection-empty.html' %}
+                {% endfor %}
+              {% endif %}
             </div>
+
+            <div class="flex justify-center">
+              <a class="p-3 text-sm text-center text-black bg-yellow-500 hover:bg-yellow-600 font-bold transition duration-200" href="{% url 'collections' %}">عرض المزيد</a>
+            </div>
+
+            
           </div>
         </div>
       </section>
@@ -87,39 +77,25 @@
           <div class="max-w-sm md:max-w-xl mx-auto lg:max-w-none">
             <div class="mb-16">
               <span class="text-sm font-bold text-yellow-500">Trending</span>
-              <h1 class="font-heading text-4xl text-white font-bold mt-6 mb-2">The best of the best</h1>
-              <p class="text-sm text-gray-400">The coolest, hottest furniture pieces.</p>
+              <h1 class="font-heading text-4xl text-white font-bold mt-6 mb-2">{% if products_section.title %} {{products_section.title}} {% else %} products title {% endif %}</h1>
+              <p class="text-sm text-gray-400">{% if products_section.subtitle %} {{products_section.subtitle}} {% else %} Lorem ipsum dolor sit amet consectetur. {% endif %}</p>
             </div>
-            <div class="flex flex-wrap -mb-8">
-              <div class="w-full md:w-1/2 lg:w-1/4 mb-8 px-4 xl:px-8">
-                <a class="group block" href="#">
-                  <img class="block mb-5 h-88 w-full object-cover transition-transform duration-500 transform group-hover:scale-102" src="{% static 'assets/images/item-cards/shirt-products4.png' %}" alt="">
-                  <span class="text-xs font-bold text-yellow-500">$99.63</span>
-                  <h6 class="font-bold text-sm text-white mt-2">Summer T-Shirt 0492</h6>
-                </a>
-              </div>
-              <div class="w-full md:w-1/2 lg:w-1/4 mb-8 px-4 xl:px-8">
-                <a class="group block" href="#">
-                  <img class="block mb-5 h-88 w-full object-cover transition-transform duration-500 transform group-hover:scale-102" src="{% static 'assets/images/item-cards/shirt-products3.png' %}" alt="">
-                  <span class="text-xs font-bold text-yellow-500">$99.63</span>
-                  <h6 class="font-bold text-sm text-white mt-2">Summer T-Shirt 0492</h6>
-                </a>
-              </div>
-              <div class="w-full md:w-1/2 lg:w-1/4 mb-8 px-4 xl:px-8">
-                <a class="group block" href="#">
-                  <img class="block mb-5 h-88 w-full object-cover transition-transform duration-500 transform group-hover:scale-102" src="{% static 'assets/images/item-cards/shirt-products2.png' %}" alt="">
-                  <span class="text-xs font-bold text-yellow-500">$99.63</span>
-                  <h6 class="font-bold text-sm text-white mt-2">Summer T-Shirt 0492</h6>
-                </a>
-              </div>
-              <div class="w-full md:w-1/2 lg:w-1/4 mb-8 px-4 xl:px-8">
-                <a class="group block" href="#">
-                  <img class="block mb-5 h-88 w-full object-cover transition-transform duration-500 transform group-hover:scale-102" src="{% static 'assets/images/item-cards/shirt-products1.png' %}" alt="">
-                  <span class="text-xs font-bold text-yellow-500">$99.63</span>
-                  <h6 class="font-bold text-sm text-white mt-2">Summer T-Shirt 0492</h6>
-                </a>
-              </div>
+            <div class="flex flex-wrap">
+              {% if featured_products %}
+                {% for featured_product in featured_products %}
+                {% include 'snippets/product.html' with product=featured_product %}
+                {% endfor %}
+              {% else %}
+                {% for x in max_products %}
+                {% include 'snippets/product-empty.html' %}
+                {% endfor %}
+              {% endif %}
             </div>
+
+            <div class="flex justify-center">
+              <a class="p-3 text-sm text-center text-black bg-yellow-500 hover:bg-yellow-600 font-bold transition duration-200" href="{% url 'products' %}">عرض المزيد</a>
+            </div>
+
           </div>
         </div>
       </section>
@@ -128,10 +104,10 @@
         <div class="container mx-auto px-4">
           <div class="max-w-md mb-20">
             <h3 class="text-4xl sm:text-5xl font-bold text-white mb-5">
-              <span class="block">Let’s discover</span>
-              <span>why we are the best</span>
+              <span class="block">{% if features_section.title %} {{features_section.title}} {% else %} features title {% endif %}</span>
+             
             </h3>
-            <p class="text-gray-400">Lorem ipsum dolor sit amet, consectetur adipiscing a elit. Nullam to the dictum aliquet accumsan porta lectus ridicul in these mattis.</p>
+            <p class="text-gray-400">{% if features_section.subtitle %} {{features_section.subtitle}} {% else %} Lorem ipsum dolor, sit amet consectetur adipisicing elit. Repellendus optio perspiciatis hic quia nulla obcaecati. {% endif %}</p>
           </div>
           <div class="flex flex-wrap -mb-6 -mx-4">
             <div class="w-full sm:w-1/2 lg:w-1/4 px-4 mb-6">
@@ -139,7 +115,7 @@
                 <svg width="60" height="60" viewbox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M50 17.5L30 7.5L10 17.5M50 17.5L30 27.5M50 17.5V42.5L30 52.5M30 27.5L10 17.5M30 27.5V52.5M10 17.5V42.5L30 52.5" stroke="#F2FF5A" stroke-width="2.5" stroke-linejoin="round"></path>
                 </svg>
-                <h4 class="text-2xl font-bold text-white mt-8">Quality Item</h4>
+                <h4 class="text-2xl font-bold text-white mt-8">جودة عالية</h4>
               </div>
             </div>
             <div class="w-full sm:w-1/2 lg:w-1/4 px-4 mb-6">
@@ -147,7 +123,7 @@
                 <svg width="60" height="60" viewbox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M32.5 40V15C32.5 13.6193 31.3807 12.5 30 12.5H10C8.61929 12.5 7.5 13.6193 7.5 15V40C7.5 41.3807 8.61929 42.5 10 42.5H12.5M32.5 40C32.5 41.3807 31.3807 42.5 30 42.5H22.5M32.5 40L32.5 20C32.5 18.6193 33.6193 17.5 35 17.5H41.4645C42.1275 17.5 42.7634 17.7634 43.2322 18.2322L51.7678 26.7678C52.2366 27.2366 52.5 27.8725 52.5 28.5355V40C52.5 41.3807 51.3807 42.5 50 42.5H47.5M32.5 40C32.5 41.3807 33.6193 42.5 35 42.5H37.5M12.5 42.5C12.5 45.2614 14.7386 47.5 17.5 47.5C20.2614 47.5 22.5 45.2614 22.5 42.5M12.5 42.5C12.5 39.7386 14.7386 37.5 17.5 37.5C20.2614 37.5 22.5 39.7386 22.5 42.5M37.5 42.5C37.5 45.2614 39.7386 47.5 42.5 47.5C45.2614 47.5 47.5 45.2614 47.5 42.5M37.5 42.5C37.5 39.7386 39.7386 37.5 42.5 37.5C45.2614 37.5 47.5 39.7386 47.5 42.5" stroke="#F2FF5A" stroke-width="2.5"></path>
                 </svg>
-                <h4 class="text-2xl font-bold text-white mt-8">Fast Delivery</h4>
+                <h4 class="text-2xl font-bold text-white mt-8">توصيل سريع</h4>
               </div>
             </div>
             <div class="w-full sm:w-1/2 lg:w-1/4 px-4 mb-6">
@@ -155,7 +131,7 @@
                 <svg width="60" height="60" viewbox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M30 20V52.5M30 20C30 20 30 16.2681 30 15C30 12.2386 32.2386 10 35 10C37.7614 10 40 12.2386 40 15C40 17.7614 37.7614 20 35 20C33.5066 20 30 20 30 20ZM30 20C30 20 30 15.1573 30 13.75C30 10.2982 27.2018 7.5 23.75 7.5C20.2982 7.5 17.5 10.2982 17.5 13.75C17.5 17.2018 20.2982 20 23.75 20C25.7945 20 30 20 30 20ZM12.5 30H47.5M12.5 30C9.73858 30 7.5 27.7614 7.5 25C7.5 22.2386 9.73858 20 12.5 20H47.5C50.2614 20 52.5 22.2386 52.5 25C52.5 27.7614 50.2614 30 47.5 30M12.5 30L12.5 47.5C12.5 50.2614 14.7386 52.5 17.5 52.5H42.5C45.2614 52.5 47.5 50.2614 47.5 47.5V30" stroke="#F2FF5A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
                 </svg>
-                <h4 class="text-2xl font-bold text-white mt-8">Surprise Gifts</h4>
+                <h4 class="text-2xl font-bold text-white mt-8">هدايا </h4>
               </div>
             </div>
             <div class="w-full sm:w-1/2 lg:w-1/4 px-4 mb-6">
@@ -163,7 +139,7 @@
                 <svg width="60" height="60" viewbox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M20 25H20.025M30 25H30.025M40 25H40.025M22.5 40H12.5C9.73858 40 7.5 37.7614 7.5 35V15C7.5 12.2386 9.73858 10 12.5 10H47.5C50.2614 10 52.5 12.2386 52.5 15V35C52.5 37.7614 50.2614 40 47.5 40H35L22.5 52.5V40Z" stroke="#F2FF5A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
                 </svg>
-                <h4 class="text-2xl font-bold text-white mt-8">Best Support</h4>
+                <h4 class="text-2xl font-bold text-white mt-8">دعم مميز</h4>
               </div>
             </div>
           </div>

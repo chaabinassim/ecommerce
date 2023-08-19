@@ -1,5 +1,10 @@
 {% extends 'base/base.html' %}
 {% load static %}
+
+{% block title %}
+<title>order update</title>
+{% endblock  %}
+
 {% block content %}
 
 <section class="py-12 md:py-24 lg:pb-32 bg-black">
@@ -34,7 +39,7 @@
 
 
                     <div class="mb-4">
-                      <label for="id_status" class="block font-medium text-white">stop desk</label>
+                      <label for="id_is_stopdesk" class="block font-medium text-white">stop desk</label>
                       {{ form.is_stopdesk }}
                       {% if form.is_stopdesk.errors %}
                           <div class="mt-1 text-red-500">
@@ -44,7 +49,7 @@
                     </div>
 
                     <div class="mb-4">
-                      <label for="id_status" class="block font-medium text-white">wilaya</label>
+                      <label for="id_state" class="block font-medium text-white">wilaya</label>
                       {{ form.state }}
                       {% if form.state.errors %}
                           <div class="mt-1 text-red-500">
@@ -54,7 +59,7 @@
                     </div>
 
                     <div class="mb-4">
-                      <label for="id_status" class="block font-medium text-white">center</label>
+                      <label for="id_center" class="block font-medium text-white">center</label>
                       {{ form.center }}
                       {% if form.center.errors %}
                           <div class="mt-1 text-red-500">
@@ -105,7 +110,7 @@
             <h6 class="font-bold text-white mb-5">Order Details</h6>
             <div class="bg-blueGray-900">
               <div class="flex items-start p-8 border-b border-blueGray-800">
-                <img class="block h-28 w-20" src="{% static 'assets/images/checkout/item-checkout1.png' %}" alt="">
+                <img class="block h-28 w-20" src="{% if order.product.image %} {{order.product.image.url}} {% else %} https://placehold.co/400x600 {% endif %}" alt="">
                 <div class="w-full pl-5">
                   <div class="flex mb-4 items-start justify-between">
                     <div class="mr-10">
@@ -113,24 +118,33 @@
                       <span class="block text-sm font-medium text-gray-400">Quantity: {{order.quantity}}</span>
                     </div>
                   </div>
-                  <div class="flex items-end justify-between">
-                    <span class="text-sm font-bold text-white">{{order.product.price}}</span>
+                  <div class="flex items-end justify-between mb-2">
+                    <span class="text-sm font-bold text-white">Produit</span>
+                    <span class="text-sm font-bold text-white">{{order.product_total}} DA</span>
+                  </div>
+                  <div class="flex items-end justify-between mb-2">
+                    <span class="text-sm font-bold text-white">Shipping </span>
+                    <span class="text-sm font-bold text-white">{{order.state_fee}} DA</span>
+                  </div>
+                  <div class="flex items-end justify-between mb-2">
+                    <span class="text-sm font-bold text-white">Total </span>
+                    <span class="text-sm font-bold text-white">{{order.order_total}} DA</span>
                   </div>
                 </div>
               </div>
               <div class="p-8">
                 <div class="flex mb-5 items-center justify-between">
-                  <span class="text-sm font-medium text-gray-400">Subtotal</span>
-                  <span class="text-sm font-medium text-white">{{order.total_price}}</span>
+                  <span class="text-sm font-medium text-gray-400">Tracking</span>
+                  <span class="text-sm font-medium text-white">{{order.tracking_id}}</span>
                 </div>
                 <div class="flex mb-5 items-center justify-between">
-                  <span class="text-sm font-medium text-gray-400">Shipping</span>
-                  <span class="text-sm font-medium text-white"> Free</span>
+                  <span class="text-sm font-medium text-gray-400">yalidine status</span>
+                  <span class="text-sm font-medium text-white">{{order.error}}</span>
                 </div>
                 
                 <div class="flex mb-8 items-center justify-between">
-                  <span class="text-sm font-bold text-white">Total To pay</span>
-                  <span class="text-sm font-bold text-white">{{order.total_price}}</span>
+                  <span class="text-sm font-bold text-gray-400">error message</span>
+                  <span class="text-sm font-bold text-white">{{order.error_message}}</span>
                 </div>
               </div>
             </div>
@@ -143,7 +157,7 @@
 {% endblock  %}
 
 {% block scripts  %}
-
+<script src="order_update.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     const stateCenterData = {
@@ -156,6 +170,8 @@
       {% endfor %}
     };
 
+    const stateLabel = document.querySelector('label[for="id_state"]');
+    const centerLabel = document.querySelector('label[for="id_center"]');
     const stateSelect = document.querySelector('#id_state');
     const centerSelect = document.querySelector('#id_center');
     const stopDeskSelect = document.querySelector('#id_is_stopdesk');
@@ -187,11 +203,15 @@
       if (selectedValue === 'true') {
         stateSelect.style.display = 'block';
         centerSelect.style.display = 'block';
+        stateLabel.style.display = 'block'; // Show state label
+        centerLabel.style.display = 'block'; // Show center label
         // Populate center options immediately if state is already selected
         populateCenterOptions(stateSelect.value);
       } else {
         stateSelect.style.display = 'none';
         centerSelect.style.display = 'none';
+        stateLabel.style.display = 'none'; // Hide state label
+        centerLabel.style.display = 'none'; // Hide center label
         clearCenterOptions();
       }
     });
@@ -199,7 +219,9 @@
     // Hide state and center inputs by default
     stateSelect.style.display = 'none';
     centerSelect.style.display = 'none';
-    
+    stateLabel.style.display = 'none'; // Hide state label
+    centerLabel.style.display = 'none'; // Hide center label
+
     // Trigger the change event on initial page load for stop desk
     stopDeskSelect.dispatchEvent(new Event('change'));
   });

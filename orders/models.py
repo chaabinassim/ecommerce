@@ -298,8 +298,7 @@ class Order(models.Model):
         return False
     
     @property
-    def order_total(self):
-        product_price = self.product.discounted_price
+    def state_fee(self):
         state = self.state
         state_fee = None
         
@@ -310,7 +309,18 @@ class Order(models.Model):
             else:
                 state_fee = fee.home_fee
         
-        total_amount = (product_price * Decimal(self.quantity)) + (state_fee if state_fee is not None else Decimal('0'))
+        return state_fee if state_fee is not None else Decimal('0')
+    
+    @property
+    def product_total(self):
+        product_price = self.product.discounted_price
+        total_amount = product_price * Decimal(self.quantity)
+        return total_amount
+
+    @property
+    def order_total(self):
+        product_price = self.product.discounted_price
+        total_amount = (product_price * Decimal(self.quantity)) + self.state_fee
         return total_amount
     
 

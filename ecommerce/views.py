@@ -3,8 +3,12 @@ from products.models import *
 from django.core.cache import cache
 from django.db.models import Case, When, BooleanField
 from customization.models import Section
+from django.conf import settings
+
 
 def home(request):
+    secret_key = settings.SECRET_KEY
+    print(secret_key)
     
     try:
         hero_section = Section.objects.get(name="Hero")

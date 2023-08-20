@@ -35,7 +35,7 @@ def home(request):
     featured_products = Product.objects.filter(is_featured=True)[:3]
 
     
-    max_products = 4
+    max_products = [1,2,3,4]
     context = {
        
         'featured_products': featured_products,

@@ -23,7 +23,7 @@ def get_custom_context(request):
         # Handle the case where the section with the given name doesn't exist
         footer_section = None   
 
-    max_collections = 3
+    max_collections = [1,2,3]
     return {
         'my_orders':my_orders,
         'featured_collections':featured_collections,

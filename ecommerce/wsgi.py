@@ -1,5 +1,5 @@
 """
-WSGI config for ecommerce project.
+WSGI config for azureproject project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -13,7 +13,7 @@ from django.core.wsgi import get_wsgi_application
 
 # Check for the WEBSITE_HOSTNAME environment variable to see if we are running in Azure Ap Service
 # If so, then load the settings from production.py
-settings_module = 'ecommerce.production' if 'WEBSITE_HOSTNAME' in os.environ else 'ecommerce.settings'
+settings_module = 'azureproject.production' if 'WEBSITE_HOSTNAME' in os.environ else 'azureproject.settings'
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', settings_module)
 
 application = get_wsgi_application()

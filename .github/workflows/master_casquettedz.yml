@@ -60,4 +60,4 @@ jobs:
         with:
           app-name: 'casquettedz'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_5A9BCF3058C44D4D9DD6DEC209BC6FDF }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_805274CC206F4071A0DC2DED12D73517 }}

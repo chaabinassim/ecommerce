@@ -8,13 +8,8 @@ def get_custom_context(request):
 
     my_orders = Order.objects.filter(session=session)
 
-    featured_collections = Collection.objects.annotate(
-        featured_rank=Case(
-            When(is_featured=True, then=1),
-            default=0,
-            output_field=BooleanField()
-        )
-    ).filter(featured_rank=True)[:3]
+    featured_collections = Collection.objects.filter(is_featured=True)[:3]
+
 
     try:
         navbar_section = Section.objects.get(name="navbar")

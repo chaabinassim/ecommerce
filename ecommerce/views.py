@@ -7,7 +7,7 @@ from django.conf import settings
 import secrets
 
 def home(request):
-    print(secrets.token_hex())
+    
     
     try:
         hero_section = Section.objects.get(name="Hero")
@@ -32,13 +32,7 @@ def home(request):
     
     
 
-    featured_products = Product.objects.annotate(
-        featured_rank=Case(
-            When(is_featured=True, then=1),
-            default=0,
-            output_field=BooleanField()
-        )
-    ).filter(featured_rank=True)[:4]
+    featured_products = Product.objects.filter(is_featured=True)[:3]
 
     
     max_products = 4

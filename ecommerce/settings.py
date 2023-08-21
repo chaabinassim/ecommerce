@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'staff',
     'performance',
     'customization',
+    'storages',
   
 ]
 
